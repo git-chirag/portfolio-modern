@@ -257,12 +257,12 @@ export default function Home() {
               <p>daily transactions strengthened with bot-detection workflows</p>
             </article>
             <article className="metric-card metric-card--yellow">
-              <strong>512D</strong>
-              <p>CLIP embeddings indexed for multimodal retrieval</p>
+              <strong>2M+</strong>
+              <p>daily users supported by the core banking platform I help maintain</p>
             </article>
             <article className="metric-card metric-card--mint">
-              <strong>31K+</strong>
-              <p>teams in the hackathon where my team reached the national finale</p>
+              <strong>92%</strong>
+              <p>test accuracy achieved by the loan eligibility model I developed</p>
             </article>
           </div>
         </section>
