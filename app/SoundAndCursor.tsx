@@ -76,53 +76,98 @@ export function SoundAndCursor() {
     ambienceGainRef.current = null;
   }, []);
 
-  const startAmbience = useCallback(() => {
+  const startAmbience = useCallback(async () => {
     const context = getAudioContext();
-    if (!context || ambienceTimerRef.current !== null) return;
-    if (context.state === "suspended") void context.resume();
+    if (!context || ambienceTimerRef.current !== null) return false;
+
+    try {
+      if (context.state !== "running") await context.resume();
+    } catch {
+      return false;
+    }
+
+    if (context.state !== "running" || !soundEnabledRef.current) return false;
 
     const masterGain = context.createGain();
-    masterGain.gain.setValueAtTime(0.22, context.currentTime);
+    const softFilter = context.createBiquadFilter();
+    masterGain.gain.setValueAtTime(0.0001, context.currentTime);
+    masterGain.gain.exponentialRampToValueAtTime(0.42, context.currentTime + 0.16);
+    softFilter.type = "lowpass";
+    softFilter.frequency.setValueAtTime(2100, context.currentTime);
+    softFilter.Q.setValueAtTime(0.7, context.currentTime);
+    softFilter.connect(masterGain);
     masterGain.connect(context.destination);
     ambienceGainRef.current = masterGain;
 
-    const notes = [261.63, 329.63, 392, 523.25, 440, 329.63, 293.66, 392];
+    const notes = [523.25, 659.25, 783.99, 659.25, 587.33, 698.46, 659.25, 523.25];
     let noteIndex = 0;
 
     const playAmbientNote = () => {
       if (!soundEnabledRef.current || !ambienceGainRef.current) return;
 
       const oscillator = context.createOscillator();
+      const sparkle = context.createOscillator();
+      const sparkleGain = context.createGain();
       const noteGain = context.createGain();
       const now = context.currentTime;
       const frequency = notes[noteIndex % notes.length];
 
-      oscillator.type = noteIndex % 3 === 0 ? "triangle" : "sine";
+      oscillator.type = "triangle";
       oscillator.frequency.setValueAtTime(frequency, now);
+      sparkle.type = "sine";
+      sparkle.frequency.setValueAtTime(frequency * 2, now);
+      sparkle.detune.setValueAtTime(noteIndex % 2 === 0 ? 4 : -4, now);
+      sparkleGain.gain.setValueAtTime(0.16, now);
       noteGain.gain.setValueAtTime(0.0001, now);
-      noteGain.gain.exponentialRampToValueAtTime(0.055, now + 0.08);
-      noteGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.05);
+      noteGain.gain.exponentialRampToValueAtTime(0.085, now + 0.045);
+      noteGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
 
       oscillator.connect(noteGain);
-      noteGain.connect(masterGain);
+      sparkle.connect(sparkleGain);
+      sparkleGain.connect(noteGain);
+      noteGain.connect(softFilter);
       oscillator.start(now);
-      oscillator.stop(now + 1.1);
+      sparkle.start(now);
+      oscillator.stop(now + 0.94);
+      sparkle.stop(now + 0.94);
+
+      if (noteIndex % 4 === 0) {
+        const bass = context.createOscillator();
+        const bassGain = context.createGain();
+        bass.type = "sine";
+        bass.frequency.setValueAtTime(frequency / 2, now);
+        bassGain.gain.setValueAtTime(0.0001, now);
+        bassGain.gain.exponentialRampToValueAtTime(0.032, now + 0.08);
+        bassGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.25);
+        bass.connect(bassGain);
+        bassGain.connect(softFilter);
+        bass.start(now);
+        bass.stop(now + 1.3);
+      }
+
       noteIndex += 1;
     };
 
     playAmbientNote();
-    ambienceTimerRef.current = window.setInterval(playAmbientNote, 1180);
+    ambienceTimerRef.current = window.setInterval(playAmbientNote, 820);
+    return true;
   }, [getAudioContext]);
 
-  const toggleSound = () => {
+  const toggleSound = async () => {
     const nextValue = !soundEnabledRef.current;
     soundEnabledRef.current = nextValue;
     setSoundEnabled(nextValue);
 
     if (nextValue) {
-      startAmbience();
-      playTone(659.25, 0.13, 0.045, "sine");
-      window.setTimeout(() => playTone(783.99, 0.12, 0.035, "sine"), 90);
+      const started = await startAmbience();
+      if (!started) {
+        soundEnabledRef.current = false;
+        setSoundEnabled(false);
+        return;
+      }
+
+      playTone(659.25, 0.13, 0.055, "sine");
+      window.setTimeout(() => playTone(783.99, 0.12, 0.045, "sine"), 90);
     } else {
       playTone(392, 0.1, 0.028, "sine");
       stopAmbience();
@@ -228,11 +273,11 @@ export function SoundAndCursor() {
         className={`sound-toggle${soundEnabled ? " is-on" : ""}`}
         type="button"
         aria-pressed={soundEnabled}
-        aria-label={soundEnabled ? "Turn website sounds off" : "Turn website sounds on"}
+        aria-label={soundEnabled ? "Turn background music and click sounds off" : "Play background music and click sounds"}
         onClick={toggleSound}
       >
         <span className="sound-toggle-icon" aria-hidden="true">{soundEnabled ? "♫" : "♪"}</span>
-        <span>Sound {soundEnabled ? "on" : "off"}</span>
+        <span>{soundEnabled ? "Music on" : "Play music"}</span>
       </button>
     </>
   );
