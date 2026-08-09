@@ -1,0 +1,25 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import test from "node:test";
+
+const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+const layout = await readFile(new URL("../app/layout.tsx", import.meta.url), "utf8");
+
+test("portfolio contains the primary content sections", () => {
+  for (const section of ["about", "experience", "projects", "toolbox", "proof", "contact"]) {
+    assert.match(page, new RegExp(`id="${section}"`));
+  }
+});
+
+test("portfolio exposes working contact and resume destinations", () => {
+  assert.match(page, /mailto:chiragaparadh@gmail\.com/);
+  assert.match(page, /href="\/resume\.pdf"/);
+  assert.match(page, /linkedin\.com\/in\/chirag-aparadh/);
+  assert.match(page, /github\.com\/git-chirag/);
+});
+
+test("metadata is portfolio-specific and the starter preview is gone", () => {
+  assert.match(layout, /Chirag Aparadh — Software Engineer/);
+  assert.doesNotMatch(page, /SkeletonPreview|codex-preview/);
+  assert.doesNotMatch(layout, /Starter Project|codex-preview/);
+});
