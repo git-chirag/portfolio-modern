@@ -220,16 +220,17 @@ footer > a:last-child:hover::after {
 
 .hero {
   width: min(1180px, calc(100% - 40px));
-  min-height: calc(100vh - 112px);
+  min-height: clamp(620px, calc(100svh - 150px), 820px);
   margin: 0 auto;
-  padding: 80px 0 72px;
+  padding: 48px 0 36px;
   display: grid;
-  grid-template-columns: minmax(0, 1.06fr) minmax(360px, 0.94fr);
+  grid-template-columns: minmax(0, 1.08fr) minmax(350px, 0.92fr);
   align-items: center;
-  gap: 72px;
+  gap: 56px;
 }
 
 .hero-copy {
+  min-width: 0;
   position: relative;
   z-index: 2;
 }
@@ -278,11 +279,12 @@ footer > a:last-child:hover::after {
 
 .hero h1 {
   max-width: 760px;
-  font-size: clamp(3.5rem, 7.2vw, 6.8rem);
+  font-size: clamp(3.5rem, 6.4vw, 6.1rem);
 }
 
 .hero-highlight {
   width: fit-content;
+  max-width: 100%;
   display: block;
   margin-top: 0.08em;
   padding: 0.01em 0.12em 0.09em;
@@ -291,14 +293,16 @@ footer > a:last-child:hover::after {
   box-shadow: 5px 5px 0 var(--ink);
   transform: rotate(-1deg);
   font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(3.5rem, 4.7vw, 4.2rem);
   font-style: italic;
   font-weight: 700;
+  line-height: 0.98;
   white-space: nowrap;
 }
 
 .hero-intro {
   max-width: 650px;
-  margin: 34px 0 0;
+  margin: 26px 0 0;
   font-size: clamp(1.05rem, 1.8vw, 1.24rem);
   line-height: 1.65;
 }
@@ -309,7 +313,7 @@ footer > a:last-child:hover::after {
   flex-wrap: wrap;
   align-items: center;
   gap: 13px;
-  margin-top: 32px;
+  margin-top: 25px;
 }
 
 .button {
@@ -345,7 +349,7 @@ footer > a:last-child:hover::after {
 }
 
 .hero-links {
-  margin-top: 26px;
+  margin-top: 18px;
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
@@ -360,7 +364,7 @@ footer > a:last-child:hover::after {
 }
 
 .hero-art {
-  min-height: 620px;
+  min-height: 540px;
   position: relative;
   display: grid;
   place-items: center;
@@ -384,7 +388,7 @@ footer > a:last-child:hover::after {
 }
 
 .portrait-card {
-  width: min(360px, 72%);
+  width: min(340px, 72%);
   padding: 12px;
   position: relative;
   z-index: 2;
@@ -397,7 +401,7 @@ footer > a:last-child:hover::after {
 }
 
 .portrait-image {
-  height: 430px;
+  height: 370px;
   position: relative;
   overflow: hidden;
   border: var(--border);
@@ -476,45 +480,39 @@ footer > a:last-child:hover::after {
 }
 
 .float-card--users {
-  left: -2%;
-  top: 27%;
-  width: 145px;
-  padding: 13px 15px;
-  flex-direction: column;
-  align-items: flex-start;
-  border-radius: 18px;
+  left: 0;
+  top: 22%;
+  width: auto;
+  padding: 9px 12px;
+  gap: 7px;
+  border-radius: 999px;
   background: var(--yellow);
-  transform: rotate(-6deg);
+  transform: rotate(-3deg);
 }
 
 .float-card--users strong {
   font-family: Georgia, serif;
-  font-size: 2rem;
+  font-size: 1.35rem;
   line-height: 1;
 }
 
+.float-card--users span {
+  font-size: 0.67rem;
+  white-space: nowrap;
+}
+
 .float-card--uptime {
-  right: -3%;
-  top: 21%;
+  right: 0;
+  top: 22%;
   padding: 11px 14px;
   gap: 7px;
   border-radius: 999px;
   background: var(--white);
-  transform: rotate(5deg);
+  transform: rotate(3deg);
 }
 
 .float-card--uptime span:last-child {
   display: none;
-}
-
-.float-card--code {
-  right: 0;
-  bottom: 20%;
-  padding: 11px 15px;
-  border-radius: 12px;
-  background: var(--lilac);
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  transform: rotate(-4deg);
 }
 
 .confetti {
@@ -630,10 +628,19 @@ footer > a:last-child:hover::after {
   gap: 18px;
 }
 
+.about {
+  padding-top: 100px;
+  padding-bottom: 100px;
+}
+
+.about .section-heading {
+  margin-bottom: 36px;
+}
+
 .about-card,
 .metric-card {
-  min-height: 330px;
-  padding: 30px;
+  min-height: 290px;
+  padding: 26px;
   border: var(--border);
   border-radius: var(--radius-md);
   box-shadow: 5px 5px 0 var(--ink);
@@ -653,9 +660,9 @@ footer > a:last-child:hover::after {
 
 .about-card h3 {
   max-width: 550px;
-  margin: 60px 0 20px;
+  margin: 30px 0 14px;
   font-family: "Trebuchet MS", sans-serif;
-  font-size: clamp(1.8rem, 3vw, 3rem);
+  font-size: clamp(1.75rem, 2.25vw, 2.35rem);
   line-height: 1.04;
   letter-spacing: -0.045em;
 }
@@ -1198,11 +1205,11 @@ footer > a:last-child {
     gap: 38px;
   }
 
-  .hero h1 { font-size: clamp(3.6rem, 7vw, 5.7rem); }
-  .hero-art { min-height: 560px; }
-  .portrait-image { height: 380px; }
-  .float-card--users { left: -7%; }
-  .float-card--uptime { right: -7%; }
+  .hero h1 { font-size: clamp(3.6rem, 7vw, 5.5rem); }
+  .hero-art { min-height: 520px; }
+  .portrait-image { height: 350px; }
+  .float-card--users { left: -4%; }
+  .float-card--uptime { right: -4%; }
 
   .about-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -1210,7 +1217,7 @@ footer > a:last-child {
 
   .about-card--wide {
     grid-column: 1 / -1;
-    min-height: 290px;
+    min-height: 260px;
   }
 
   .experience-card {
@@ -1243,7 +1250,6 @@ footer > a:last-child {
   .hero-art { min-height: 600px; }
   .float-card--users { left: 5%; }
   .float-card--uptime { right: 4%; }
-  .float-card--code { right: 6%; }
 
   .section-heading--split {
     grid-template-columns: 1fr;
@@ -1312,6 +1318,7 @@ footer > a:last-child {
 
   .hero-highlight {
     width: 100%;
+    font-size: 0.82em;
     white-space: normal;
   }
 
@@ -1338,10 +1345,10 @@ footer > a:last-child {
   .portrait-caption { padding: 10px 4px 2px; }
   .portrait-caption strong { font-size: 0.78rem; }
   .float-card--users { left: 0; top: 25%; width: 112px; padding: 10px; }
-  .float-card--users strong { font-size: 1.5rem; }
+  .float-card--users { width: auto; padding: 8px 10px; }
+  .float-card--users strong { font-size: 1.2rem; }
   .float-card--users span { font-size: 0.58rem; }
   .float-card--uptime { right: -2%; top: 17%; font-size: 0.63rem; }
-  .float-card--code { right: 0; bottom: 17%; font-size: 0.62rem; }
   .shape--orange { width: 130px; height: 130px; }
   .shape--pink { width: 110px; height: 80px; }
   .shape--mint { width: 70px; height: 70px; }

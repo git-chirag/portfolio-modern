@@ -207,14 +207,13 @@ export default function Home() {
             </div>
             <div className="float-card float-card--users">
               <strong>2M+</strong>
-              <span>daily users supported</span>
+              <span>daily users</span>
             </div>
             <div className="float-card float-card--uptime">
               <span className="status-dot" />
               <strong>99.99%</strong>
               <span>platform uptime</span>
             </div>
-            <div className="float-card float-card--code">{`{ ship(); }`}</div>
             <span className="confetti confetti--one" aria-hidden="true" />
             <span className="confetti confetti--two" aria-hidden="true" />
             <span className="confetti confetti--three" aria-hidden="true" />
