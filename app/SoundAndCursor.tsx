@@ -1,19 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 type SafariAudioWindow = Window & typeof globalThis & {
   webkitAudioContext?: typeof AudioContext;
 };
 
 export function SoundAndCursor() {
-  const [soundEnabled, setSoundEnabled] = useState(false);
-  const soundEnabledRef = useRef(false);
   const audioContextRef = useRef<AudioContext | null>(null);
-  const ambienceTimerRef = useRef<number | null>(null);
-  const ambienceGainRef = useRef<GainNode | null>(null);
   const cursorRef = useRef<HTMLDivElement | null>(null);
-  const cursorDotRef = useRef<HTMLDivElement | null>(null);
+  const cursorTipRef = useRef<HTMLDivElement | null>(null);
 
   const getAudioContext = useCallback(() => {
     if (audioContextRef.current) return audioContextRef.current;
@@ -37,154 +33,46 @@ export function SoundAndCursor() {
     ) => {
       const context = getAudioContext();
       if (!context) return;
-      if (context.state === "suspended") void context.resume();
 
-      const oscillator = context.createOscillator();
-      const gain = context.createGain();
-      const now = context.currentTime;
+      const makeSound = () => {
+        if (context.state !== "running") return;
 
-      oscillator.type = type;
-      oscillator.frequency.setValueAtTime(frequency, now);
-      oscillator.frequency.exponentialRampToValueAtTime(frequency * 1.025, now + duration);
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(volume, now + 0.012);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+        const oscillator = context.createOscillator();
+        const gain = context.createGain();
+        const now = context.currentTime;
 
-      oscillator.connect(gain);
-      gain.connect(context.destination);
-      oscillator.start(now);
-      oscillator.stop(now + duration + 0.02);
+        oscillator.type = type;
+        oscillator.frequency.setValueAtTime(frequency, now);
+        oscillator.frequency.exponentialRampToValueAtTime(frequency * 1.025, now + duration);
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(volume, now + 0.012);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+        oscillator.connect(gain);
+        gain.connect(context.destination);
+        oscillator.start(now);
+        oscillator.stop(now + duration + 0.02);
+      };
+
+      if (context.state === "suspended") {
+        void context.resume().then(makeSound).catch(() => undefined);
+      } else {
+        makeSound();
+      }
     },
     [getAudioContext],
   );
 
-  const stopAmbience = useCallback(() => {
-    if (ambienceTimerRef.current !== null) {
-      window.clearInterval(ambienceTimerRef.current);
-      ambienceTimerRef.current = null;
-    }
-
-    const context = audioContextRef.current;
-    const gain = ambienceGainRef.current;
-    if (context && gain) {
-      const now = context.currentTime;
-      gain.gain.cancelScheduledValues(now);
-      gain.gain.setValueAtTime(Math.max(gain.gain.value, 0.0001), now);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
-      window.setTimeout(() => gain.disconnect(), 240);
-    }
-    ambienceGainRef.current = null;
-  }, []);
-
-  const startAmbience = useCallback(async () => {
-    const context = getAudioContext();
-    if (!context || ambienceTimerRef.current !== null) return false;
-
-    try {
-      if (context.state !== "running") await context.resume();
-    } catch {
-      return false;
-    }
-
-    if (context.state !== "running" || !soundEnabledRef.current) return false;
-
-    const masterGain = context.createGain();
-    const softFilter = context.createBiquadFilter();
-    masterGain.gain.setValueAtTime(0.0001, context.currentTime);
-    masterGain.gain.exponentialRampToValueAtTime(0.42, context.currentTime + 0.16);
-    softFilter.type = "lowpass";
-    softFilter.frequency.setValueAtTime(2100, context.currentTime);
-    softFilter.Q.setValueAtTime(0.7, context.currentTime);
-    softFilter.connect(masterGain);
-    masterGain.connect(context.destination);
-    ambienceGainRef.current = masterGain;
-
-    const notes = [523.25, 659.25, 783.99, 659.25, 587.33, 698.46, 659.25, 523.25];
-    let noteIndex = 0;
-
-    const playAmbientNote = () => {
-      if (!soundEnabledRef.current || !ambienceGainRef.current) return;
-
-      const oscillator = context.createOscillator();
-      const sparkle = context.createOscillator();
-      const sparkleGain = context.createGain();
-      const noteGain = context.createGain();
-      const now = context.currentTime;
-      const frequency = notes[noteIndex % notes.length];
-
-      oscillator.type = "triangle";
-      oscillator.frequency.setValueAtTime(frequency, now);
-      sparkle.type = "sine";
-      sparkle.frequency.setValueAtTime(frequency * 2, now);
-      sparkle.detune.setValueAtTime(noteIndex % 2 === 0 ? 4 : -4, now);
-      sparkleGain.gain.setValueAtTime(0.16, now);
-      noteGain.gain.setValueAtTime(0.0001, now);
-      noteGain.gain.exponentialRampToValueAtTime(0.085, now + 0.045);
-      noteGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
-
-      oscillator.connect(noteGain);
-      sparkle.connect(sparkleGain);
-      sparkleGain.connect(noteGain);
-      noteGain.connect(softFilter);
-      oscillator.start(now);
-      sparkle.start(now);
-      oscillator.stop(now + 0.94);
-      sparkle.stop(now + 0.94);
-
-      if (noteIndex % 4 === 0) {
-        const bass = context.createOscillator();
-        const bassGain = context.createGain();
-        bass.type = "sine";
-        bass.frequency.setValueAtTime(frequency / 2, now);
-        bassGain.gain.setValueAtTime(0.0001, now);
-        bassGain.gain.exponentialRampToValueAtTime(0.032, now + 0.08);
-        bassGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.25);
-        bass.connect(bassGain);
-        bassGain.connect(softFilter);
-        bass.start(now);
-        bass.stop(now + 1.3);
-      }
-
-      noteIndex += 1;
-    };
-
-    playAmbientNote();
-    ambienceTimerRef.current = window.setInterval(playAmbientNote, 820);
-    return true;
-  }, [getAudioContext]);
-
-  const toggleSound = async () => {
-    const nextValue = !soundEnabledRef.current;
-    soundEnabledRef.current = nextValue;
-    setSoundEnabled(nextValue);
-
-    if (nextValue) {
-      const started = await startAmbience();
-      if (!started) {
-        soundEnabledRef.current = false;
-        setSoundEnabled(false);
-        return;
-      }
-
-      playTone(659.25, 0.13, 0.055, "sine");
-      window.setTimeout(() => playTone(783.99, 0.12, 0.045, "sine"), 90);
-    } else {
-      playTone(392, 0.1, 0.028, "sine");
-      stopAmbience();
-    }
-  };
-
   useEffect(() => {
     const handleInteractiveClick = (event: PointerEvent) => {
-      if (!soundEnabledRef.current) return;
+      if (event.button !== 0) return;
       const target = event.target;
       if (!(target instanceof Element)) return;
-      const interactive = target.closest("a, button, summary");
-      if (!interactive || interactive.classList.contains("sound-toggle")) return;
 
       const noteSet = [523.25, 587.33, 659.25, 783.99];
       const note = noteSet[Math.abs(Math.round(event.clientX)) % noteSet.length];
-      playTone(note, 0.075, 0.028, "triangle");
+      const isInteractive = Boolean(target.closest("a, button, summary"));
+      playTone(note, isInteractive ? 0.08 : 0.055, isInteractive ? 0.04 : 0.022, "triangle");
     };
 
     window.addEventListener("pointerdown", handleInteractiveClick);
@@ -197,8 +85,8 @@ export function SoundAndCursor() {
     if (!finePointer.matches || reducedMotion.matches) return;
 
     const cursor = cursorRef.current;
-    const dot = cursorDotRef.current;
-    if (!cursor || !dot) return;
+    const tip = cursorTipRef.current;
+    if (!cursor || !tip) return;
 
     document.body.classList.add("has-fun-cursor");
     let targetX = -100;
@@ -211,16 +99,16 @@ export function SoundAndCursor() {
     const animate = () => {
       currentX += (targetX - currentX) * 0.22;
       currentY += (targetY - currentY) * 0.22;
-      cursor.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) translate(-50%, -50%)`;
+      cursor.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
       frame = window.requestAnimationFrame(animate);
     };
 
     const handleMove = (event: PointerEvent) => {
       targetX = event.clientX;
       targetY = event.clientY;
-      dot.style.transform = `translate3d(${targetX}px, ${targetY}px, 0) translate(-50%, -50%)`;
+      tip.style.transform = `translate3d(${targetX}px, ${targetY}px, 0) translate(-50%, -50%) rotate(45deg)`;
       cursor.classList.add("is-visible");
-      dot.classList.add("is-visible");
+      tip.classList.add("is-visible");
     };
 
     const handleOver = (event: PointerEvent) => {
@@ -231,13 +119,17 @@ export function SoundAndCursor() {
 
     const handleDown = () => {
       cursor.classList.add("is-clicking");
+      tip.classList.add("is-clicking");
       window.clearTimeout(clickTimer);
-      clickTimer = window.setTimeout(() => cursor.classList.remove("is-clicking"), 150);
+      clickTimer = window.setTimeout(() => {
+        cursor.classList.remove("is-clicking");
+        tip.classList.remove("is-clicking");
+      }, 150);
     };
 
     const handleLeave = () => {
       cursor.classList.remove("is-visible");
-      dot.classList.remove("is-visible");
+      tip.classList.remove("is-visible");
     };
 
     window.addEventListener("pointermove", handleMove);
@@ -259,7 +151,6 @@ export function SoundAndCursor() {
 
   useEffect(() => {
     return () => {
-      if (ambienceTimerRef.current !== null) window.clearInterval(ambienceTimerRef.current);
       const context = audioContextRef.current;
       if (context && context.state !== "closed") void context.close();
     };
@@ -268,17 +159,7 @@ export function SoundAndCursor() {
   return (
     <>
       <div className="fun-cursor" ref={cursorRef} aria-hidden="true"><span /></div>
-      <div className="fun-cursor-dot" ref={cursorDotRef} aria-hidden="true" />
-      <button
-        className={`sound-toggle${soundEnabled ? " is-on" : ""}`}
-        type="button"
-        aria-pressed={soundEnabled}
-        aria-label={soundEnabled ? "Turn background music and click sounds off" : "Play background music and click sounds"}
-        onClick={toggleSound}
-      >
-        <span className="sound-toggle-icon" aria-hidden="true">{soundEnabled ? "♫" : "♪"}</span>
-        <span>{soundEnabled ? "Music on" : "Play music"}</span>
-      </button>
+      <div className="fun-cursor-tip" ref={cursorTipRef} aria-hidden="true" />
     </>
   );
 }

@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { PortraitSwitcher } from "./PortraitSwitcher";
 
 const experience = [
   {
@@ -265,15 +265,7 @@ export default function Home() {
             <div className="shape shape--pink" aria-hidden="true" />
             <div className="shape shape--mint" aria-hidden="true" />
             <div className="portrait-card">
-              <div className="portrait-image">
-                <Image
-                  src="/profile.jpg"
-                  alt="Chirag Aparadh outdoors in the hills"
-                  fill
-                  priority
-                  sizes="(max-width: 900px) 76vw, 38vw"
-                />
-              </div>
+              <PortraitSwitcher />
               <div className="portrait-caption">
                 <span>Currently</span>
                 <strong>Software Engineer @ Oracle</strong>
