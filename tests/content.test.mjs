@@ -18,6 +18,12 @@ test("portfolio exposes working contact and resume destinations", () => {
   assert.match(page, /github\.com\/git-chirag/);
 });
 
+test("portfolio includes the JiraRL agent environment project", () => {
+  assert.match(page, /title: "JiraRL"/);
+  assert.match(page, /OpenEnv-compatible Jira simulation/);
+  assert.match(page, /project-jirarl\.webp/);
+});
+
 test("metadata is portfolio-specific and the starter preview is gone", () => {
   assert.match(layout, /Chirag Aparadh — Software Engineer/);
   assert.doesNotMatch(page, /SkeletonPreview|codex-preview/);

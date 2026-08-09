@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import Image from "next/image";
 import { PortraitSwitcher } from "./PortraitSwitcher";
 
 const experience = [
@@ -36,10 +37,27 @@ const experience = [
 
 const projects = [
   {
+    title: "JiraRL",
+    kicker: "Stateful RL environment · OpenEnv",
+    description:
+      "An OpenEnv-compatible Jira simulation for training and evaluating LLM agents across ticket triage, assignment, prioritization, dependencies, SLA compliance, and resolution workflows.",
+    highlights: [
+      "Validates agent decisions through a structured action space and guarded state-transition engine.",
+      "Runs isolated, reproducible REST and WebSocket episodes with seeded scenarios and concurrent agents.",
+      "Benchmarks random, rule-based, guarded-LLM, and raw-LLM policies across reward, completion, invalid actions, and step efficiency.",
+      "Generates reproducible chat-format demonstrations with leakage-safe training, validation, and test splits.",
+    ],
+    technologies: ["Python", "FastAPI", "WebSockets", "OpenEnv", "Reinforcement Learning", "LLM Agents"],
+    visual: "jira",
+    href: "https://github.com/git-chirag",
+    className: "project-card--hero project-card--jira",
+  },
+  {
     title: "Multimodal Image Search",
     kicker: "Distributed AI pipeline",
     description:
       "An asynchronous FastAPI and Celery system that generates CLIP embeddings for text-to-image retrieval, visual similarity search, and near-duplicate detection. Redis coordinates jobs, Qdrant indexes vectors, and S3 stores processed assets.",
+    highlights: [],
     technologies: ["FastAPI", "Celery", "CLIP", "Qdrant", "Redis", "AWS", "Docker"],
     visual: "search",
     href: "https://github.com/git-chirag/image_processor",
@@ -50,6 +68,7 @@ const projects = [
     kicker: "Published research · DApp",
     description:
       "A role-aware Ethereum application for transparent product listings, bidding, purchasing, and traceability across the supply chain.",
+    highlights: [],
     technologies: ["Ethereum", "Solidity", "React", "Tailwind"],
     visual: "chain",
     href: "https://github.com/git-chirag",
@@ -60,6 +79,7 @@ const projects = [
     kicker: "Location-aware mobile app",
     description:
       "A Flutter app for connection requests, live location sharing, and nearby meeting-place suggestions powered by Google Maps.",
+    highlights: [],
     technologies: ["Flutter", "Dart", "Firebase", "Google Maps"],
     visual: "meetup",
     href: "https://github.com/git-chirag",
@@ -157,6 +177,22 @@ function Arrow() {
 }
 
 function ProjectVisual({ kind, title }: { kind: string; title: string }) {
+  if (kind === "jira") {
+    return (
+      <div className="project-visual project-visual--jira">
+        <Image
+          src="/project-jirarl.webp"
+          alt={`Pastel ticket-workflow and reinforcement-learning illustration for ${title}`}
+          fill
+          sizes="(max-width: 900px) 100vw, 62vw"
+        />
+        <div className="jira-loop" aria-hidden="true">
+          <span>observe</span><i>→</i><span>act</span><i>→</i><span>reward</span>
+        </div>
+      </div>
+    );
+  }
+
   if (kind === "search") {
     return (
       <div className="project-visual project-visual--search" role="img" aria-label={`Pastel search interface illustration for ${title}`}>
@@ -415,6 +451,11 @@ export default function Home() {
                   <p className="project-kicker">{project.kicker}</p>
                   <h3>{project.title}</h3>
                   <p>{project.description}</p>
+                  {project.highlights.length > 0 && (
+                    <ul className="project-highlights">
+                      {project.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}
+                    </ul>
+                  )}
                   <div className="tag-list">
                     {project.technologies.map((technology) => <span key={technology}>{technology}</span>)}
                   </div>
