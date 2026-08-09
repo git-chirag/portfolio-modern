@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import Image from "next/image";
 import { PortraitSwitcher } from "./PortraitSwitcher";
+import { ThemeToggle } from "./ThemeToggle";
 
 const experience = [
   {
@@ -285,6 +286,8 @@ export default function Home() {
           <a href="#projects">Projects</a>
           <a href="#proof">Proof</a>
         </nav>
+
+        <ThemeToggle />
 
         <a className="nav-cta" href="mailto:chiragaparadh@gmail.com">
           Say hello <Arrow />

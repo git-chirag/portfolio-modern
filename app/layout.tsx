@@ -48,12 +48,29 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#fffaf2",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fffaf2" },
+    { media: "(prefers-color-scheme: dark)", color: "#11131b" },
+  ],
 };
+
+const themeScript = `(() => {
+  try {
+    const saved = localStorage.getItem("chirag-theme");
+    const theme = saved === "dark" || saved === "light"
+      ? saved
+      : matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+  } catch {}
+})();`;
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body>
         {children}
         <SoundAndCursor />

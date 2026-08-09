@@ -4,6 +4,8 @@ import test from "node:test";
 
 const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
 const layout = await readFile(new URL("../app/layout.tsx", import.meta.url), "utf8");
+const themeToggle = await readFile(new URL("../app/ThemeToggle.tsx", import.meta.url), "utf8");
+const styles = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
 
 test("portfolio contains the primary content sections", () => {
   for (const section of ["about", "experience", "projects", "toolbox", "proof", "contact"]) {
@@ -28,4 +30,12 @@ test("metadata is portfolio-specific and the starter preview is gone", () => {
   assert.match(layout, /Chirag Aparadh — Software Engineer/);
   assert.doesNotMatch(page, /SkeletonPreview|codex-preview/);
   assert.doesNotMatch(layout, /Starter Project|codex-preview/);
+});
+
+test("dark mode follows the system, persists a choice, and has a visible control", () => {
+  assert.match(page, /<ThemeToggle \/>/);
+  assert.match(layout, /prefers-color-scheme: dark/);
+  assert.match(themeToggle, /chirag-theme/);
+  assert.match(themeToggle, /aria-label="Toggle color theme"/);
+  assert.match(styles, /\[data-theme="dark"\]/);
 });
