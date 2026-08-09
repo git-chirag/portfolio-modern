@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { SoundAndCursor } from "./SoundAndCursor";
 import "./globals.css";
 
 const vercelHost = process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL;
@@ -53,7 +54,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+        <SoundAndCursor />
+      </body>
     </html>
   );
 }
