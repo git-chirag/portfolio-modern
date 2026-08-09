@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { PortraitSwitcher } from "./PortraitSwitcher";
 
 const experience = [
@@ -94,37 +95,36 @@ const skillGroups = [
   },
 ];
 
-const skillIdentifiers: Record<string, { mark: string; tone: string }> = {
-  Java: { mark: "J", tone: "coral" },
-  Python: { mark: "Py", tone: "sky" },
-  C: { mark: "C", tone: "lilac" },
-  JavaScript: { mark: "JS", tone: "yellow" },
-  SQL: { mark: "DB", tone: "mint" },
-  "Java EE": { mark: "J+", tone: "coral" },
-  FastAPI: { mark: "FA", tone: "mint" },
-  Django: { mark: "Dj", tone: "green" },
-  "REST APIs": { mark: "{}", tone: "sky" },
-  Microservices: { mark: "µS", tone: "pink" },
-  Kafka: { mark: "K", tone: "lilac" },
-  Celery: { mark: "Ce", tone: "green" },
-  PyTorch: { mark: "Pt", tone: "coral" },
-  CLIP: { mark: "AI", tone: "pink" },
-  Qdrant: { mark: "Q", tone: "lilac" },
-  Redis: { mark: "R", tone: "coral" },
-  Pandas: { mark: "Pd", tone: "sky" },
-  "Scikit-learn": { mark: "Sk", tone: "yellow" },
-  AWS: { mark: "AWS", tone: "peach" },
-  Docker: { mark: "D", tone: "sky" },
-  Kubernetes: { mark: "K8", tone: "blue" },
-  Jenkins: { mark: "J", tone: "pink" },
-  Linux: { mark: "LX", tone: "yellow" },
-  ECS: { mark: "EC", tone: "peach" },
-  ECR: { mark: "ER", tone: "coral" },
-  S3: { mark: "S3", tone: "mint" },
-  "Oracle Database": { mark: "O", tone: "coral" },
-  MySQL: { mark: "my", tone: "sky" },
-  MongoDB: { mark: "M", tone: "green" },
-  Firebase: { mark: "F", tone: "yellow" },
+const deviconBase = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons";
+
+const skillIcons: Record<string, string> = {
+  Java: `${deviconBase}/java/java-original.svg`,
+  Python: `${deviconBase}/python/python-original.svg`,
+  C: `${deviconBase}/c/c-original.svg`,
+  JavaScript: `${deviconBase}/javascript/javascript-original.svg`,
+  "Java EE": `${deviconBase}/java/java-original.svg`,
+  FastAPI: `${deviconBase}/fastapi/fastapi-original.svg`,
+  Django: `${deviconBase}/django/django-plain.svg`,
+  Kafka: `${deviconBase}/apachekafka/apachekafka-original.svg`,
+  Celery: "https://cdn.simpleicons.org/celery/37814A",
+  PyTorch: `${deviconBase}/pytorch/pytorch-original.svg`,
+  CLIP: "https://cdn.simpleicons.org/openai/412991",
+  Qdrant: "https://cdn.simpleicons.org/qdrant/DC244C",
+  Redis: `${deviconBase}/redis/redis-original.svg`,
+  Pandas: `${deviconBase}/pandas/pandas-original.svg`,
+  "Scikit-learn": `${deviconBase}/scikitlearn/scikitlearn-original.svg`,
+  AWS: `${deviconBase}/amazonwebservices/amazonwebservices-original-wordmark.svg`,
+  Docker: `${deviconBase}/docker/docker-original.svg`,
+  Kubernetes: `${deviconBase}/kubernetes/kubernetes-original.svg`,
+  Jenkins: `${deviconBase}/jenkins/jenkins-original.svg`,
+  Linux: `${deviconBase}/linux/linux-original.svg`,
+  ECS: `${deviconBase}/amazonwebservices/amazonwebservices-original-wordmark.svg`,
+  ECR: `${deviconBase}/amazonwebservices/amazonwebservices-original-wordmark.svg`,
+  S3: `${deviconBase}/amazonwebservices/amazonwebservices-original-wordmark.svg`,
+  "Oracle Database": `${deviconBase}/oracle/oracle-original.svg`,
+  MySQL: `${deviconBase}/mysql/mysql-original.svg`,
+  MongoDB: `${deviconBase}/mongodb/mongodb-original.svg`,
+  Firebase: `${deviconBase}/firebase/firebase-original.svg`,
 };
 
 const achievements = [
@@ -443,12 +443,15 @@ export default function Home() {
                 <h3>{group.label}</h3>
                 <ul>
                   {group.items.map((item) => {
-                    const identifier = skillIdentifiers[item] ?? { mark: item.slice(0, 2), tone: "paper" };
+                    const icon = skillIcons[item];
+                    const isWideLogo = icon?.includes("amazonwebservices") || icon?.includes("/oracle/");
                     return (
                       <li key={item}>
-                        <span className={`skill-mark skill-mark--${identifier.tone}`} aria-hidden="true">
-                          {identifier.mark}
-                        </span>
+                        {icon && (
+                          <span className={`skill-logo${isWideLogo ? " skill-logo--wide" : ""}`} aria-hidden="true">
+                            <img src={icon} alt="" width="28" height="22" loading="lazy" />
+                          </span>
+                        )}
                         <span>{item}</span>
                       </li>
                     );

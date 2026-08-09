@@ -1432,44 +1432,35 @@ footer > a:last-child:hover::after {
   font-weight: 800;
 }
 
-.skill-mark {
-  width: 25px;
-  height: 25px;
-  flex: 0 0 25px;
+.skill-logo {
+  width: 23px;
+  height: 23px;
+  flex: 0 0 23px;
   display: grid;
   place-items: center;
-  border: 1.25px solid var(--ink);
-  border-radius: 7px 5px 8px 6px;
-  color: var(--ink);
-  background: var(--paper);
-  box-shadow: 1.5px 1.5px 0 rgba(32, 33, 38, 0.7);
-  font-family: "Trebuchet MS", sans-serif;
-  font-size: 0.58rem;
-  font-weight: 950;
-  line-height: 1;
-  letter-spacing: -0.04em;
-  transform: rotate(-2deg);
+  transform: rotate(-3deg);
   transition: transform 150ms ease;
 }
 
-.skill-group li:nth-child(even) .skill-mark {
+.skill-logo img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+.skill-logo--wide {
+  width: 31px;
+  flex-basis: 31px;
+}
+
+.skill-group li:nth-child(even) .skill-logo {
   transform: rotate(2deg);
 }
 
-.skill-group li:hover .skill-mark {
+.skill-group li:hover .skill-logo {
   transform: rotate(-7deg) scale(1.12);
 }
-
-.skill-mark--coral { background: var(--coral); }
-.skill-mark--sky { background: #a9dff0; }
-.skill-mark--lilac { background: var(--lilac); }
-.skill-mark--yellow { background: var(--yellow); }
-.skill-mark--mint { background: var(--mint); }
-.skill-mark--pink { background: var(--pink); }
-.skill-mark--peach { background: var(--peach); }
-.skill-mark--green { background: #8fd3aa; }
-.skill-mark--blue { background: #8db9ee; }
-.skill-mark--paper { background: var(--paper); }
 
 .skill-group--peach { background: var(--peach); }
 .skill-group--sky { background: var(--sky); }
