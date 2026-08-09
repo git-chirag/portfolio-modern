@@ -94,6 +94,39 @@ const skillGroups = [
   },
 ];
 
+const skillIdentifiers: Record<string, { mark: string; tone: string }> = {
+  Java: { mark: "J", tone: "coral" },
+  Python: { mark: "Py", tone: "sky" },
+  C: { mark: "C", tone: "lilac" },
+  JavaScript: { mark: "JS", tone: "yellow" },
+  SQL: { mark: "DB", tone: "mint" },
+  "Java EE": { mark: "J+", tone: "coral" },
+  FastAPI: { mark: "FA", tone: "mint" },
+  Django: { mark: "Dj", tone: "green" },
+  "REST APIs": { mark: "{}", tone: "sky" },
+  Microservices: { mark: "µS", tone: "pink" },
+  Kafka: { mark: "K", tone: "lilac" },
+  Celery: { mark: "Ce", tone: "green" },
+  PyTorch: { mark: "Pt", tone: "coral" },
+  CLIP: { mark: "AI", tone: "pink" },
+  Qdrant: { mark: "Q", tone: "lilac" },
+  Redis: { mark: "R", tone: "coral" },
+  Pandas: { mark: "Pd", tone: "sky" },
+  "Scikit-learn": { mark: "Sk", tone: "yellow" },
+  AWS: { mark: "AWS", tone: "peach" },
+  Docker: { mark: "D", tone: "sky" },
+  Kubernetes: { mark: "K8", tone: "blue" },
+  Jenkins: { mark: "J", tone: "pink" },
+  Linux: { mark: "LX", tone: "yellow" },
+  ECS: { mark: "EC", tone: "peach" },
+  ECR: { mark: "ER", tone: "coral" },
+  S3: { mark: "S3", tone: "mint" },
+  "Oracle Database": { mark: "O", tone: "coral" },
+  MySQL: { mark: "my", tone: "sky" },
+  MongoDB: { mark: "M", tone: "green" },
+  Firebase: { mark: "F", tone: "yellow" },
+};
+
 const achievements = [
   {
     title: "Meta × Hugging Face OpenEnv Finalist",
@@ -409,7 +442,17 @@ export default function Home() {
                 <span>0{index + 1}</span>
                 <h3>{group.label}</h3>
                 <ul>
-                  {group.items.map((item) => <li key={item}>{item}</li>)}
+                  {group.items.map((item) => {
+                    const identifier = skillIdentifiers[item] ?? { mark: item.slice(0, 2), tone: "paper" };
+                    return (
+                      <li key={item}>
+                        <span className={`skill-mark skill-mark--${identifier.tone}`} aria-hidden="true">
+                          {identifier.mark}
+                        </span>
+                        <span>{item}</span>
+                      </li>
+                    );
+                  })}
                 </ul>
               </article>
             ))}
