@@ -40,7 +40,7 @@ const projects = [
     description:
       "An asynchronous FastAPI and Celery system that generates CLIP embeddings for text-to-image retrieval, visual similarity search, and near-duplicate detection. Redis coordinates jobs, Qdrant indexes vectors, and S3 stores processed assets.",
     technologies: ["FastAPI", "Celery", "CLIP", "Qdrant", "Redis", "AWS", "Docker"],
-    image: "/asyn_image_process.png",
+    visual: "search",
     href: "https://github.com/git-chirag/image_processor",
     className: "project-card--hero",
   },
@@ -50,7 +50,7 @@ const projects = [
     description:
       "A role-aware Ethereum application for transparent product listings, bidding, purchasing, and traceability across the supply chain.",
     technologies: ["Ethereum", "Solidity", "React", "Tailwind"],
-    image: "/blockchain_dagronomics.png",
+    visual: "chain",
     href: "https://github.com/git-chirag",
     className: "project-card--yellow",
   },
@@ -60,7 +60,7 @@ const projects = [
     description:
       "A Flutter app for connection requests, live location sharing, and nearby meeting-place suggestions powered by Google Maps.",
     technologies: ["Flutter", "Dart", "Firebase", "Google Maps"],
-    image: "/social_meetup.png",
+    visual: "meetup",
     href: "https://github.com/git-chirag",
     className: "project-card--pink",
   },
@@ -121,6 +121,80 @@ const achievements = [
 
 function Arrow() {
   return <span aria-hidden="true">↗</span>;
+}
+
+function ProjectVisual({ kind, title }: { kind: string; title: string }) {
+  if (kind === "search") {
+    return (
+      <div className="project-visual project-visual--search" role="img" aria-label={`Pastel search interface illustration for ${title}`}>
+        <div className="search-window" aria-hidden="true">
+          <div className="mock-window-bar">
+            <span /><span /><span />
+            <b>image_search</b>
+          </div>
+          <div className="mock-search-bar">
+            <span>⌕</span>
+            <strong>find similar images</strong>
+            <kbd>↵</kbd>
+          </div>
+          <div className="mock-result-grid">
+            {Array.from({ length: 6 }, (_, index) => <span key={index}><i /></span>)}
+          </div>
+        </div>
+        <div className="pipeline-row" aria-hidden="true">
+          <span>FastAPI</span><i>→</i><span>CLIP</span><i>→</i><span>Qdrant</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (kind === "chain") {
+    return (
+      <div className="project-visual project-visual--chain" role="img" aria-label={`Pastel supply-chain flow illustration for ${title}`}>
+        <div className="chain-title" aria-hidden="true">
+          <span>LIVE LEDGER</span>
+          <strong>Product journey</strong>
+        </div>
+        <div className="chain-track" aria-hidden="true">
+          {["Producer", "Distributor", "Retailer", "Consumer"].map((step, index) => (
+            <div className="chain-step" key={step}>
+              <span>0{index + 1}</span>
+              <b>{step}</b>
+            </div>
+          ))}
+        </div>
+        <div className="ledger-stack" aria-hidden="true">
+          <span>Block 0241 · verified</span>
+          <span>Block 0242 · verified</span>
+          <span>Block 0243 · verified</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="project-visual project-visual--meetup" role="img" aria-label={`Pastel meetup map illustration for ${title}`}>
+      <div className="map-backdrop" aria-hidden="true">
+        <span className="map-pin map-pin--one">A</span>
+        <span className="map-pin map-pin--two">B</span>
+        <span className="map-pin map-pin--three">C</span>
+      </div>
+      <div className="meetup-phone" aria-hidden="true">
+        <span className="phone-speaker" />
+        <div className="phone-map">
+          <i className="route route--one" />
+          <i className="route route--two" />
+          <span className="phone-pin">★</span>
+        </div>
+        <div className="meeting-sheet">
+          <strong>Sunday coffee?</strong>
+          <span>3 places nearby</span>
+        </div>
+      </div>
+      <span className="meetup-bubble meetup-bubble--yes" aria-hidden="true">I’m in!</span>
+      <span className="meetup-bubble meetup-bubble--time" aria-hidden="true">4:30?</span>
+    </div>
+  );
 }
 
 export default function Home() {
@@ -309,13 +383,7 @@ export default function Home() {
             {projects.map((project, index) => (
               <article className={`project-card ${project.className}`} key={project.title}>
                 <div className="project-image">
-                  <Image
-                    src={project.image}
-                    alt={`Architecture visual for ${project.title}`}
-                    width={2048}
-                    height={1152}
-                    sizes={index === 0 ? "(max-width: 900px) 100vw, 65vw" : "(max-width: 900px) 100vw, 38vw"}
-                  />
+                  <ProjectVisual kind={project.visual} title={project.title} />
                   <span className="project-count">0{index + 1}</span>
                 </div>
                 <div className="project-copy">
