@@ -1,6 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 import { PortraitSwitcher } from "./PortraitSwitcher";
 import { ThemeToggle } from "./ThemeToggle";
+import { JiraRLPlayground } from "./JiraRLPlayground";
+import { ContactForm } from "./ContactForm";
+import { MobileNav } from "./MobileNav";
 
 const experience = [
   {
@@ -189,43 +192,7 @@ function Arrow() {
 
 function ProjectVisual({ kind, title }: { kind: string; title: string }) {
   if (kind === "jira") {
-    return (
-      <div className="project-visual project-visual--jira" role="img" aria-label={`Pastel reinforcement-learning ticket board illustration for ${title}`}>
-        <div className="rl-window" aria-hidden="true">
-          <div className="mock-window-bar">
-            <span /><span /><span />
-            <b>agent_episode_07</b>
-          </div>
-          <div className="rl-summary">
-            <span className="rl-agent"><i>AI</i><b>guarded agent</b></span>
-            <span className="rl-score"><i /> reward +8</span>
-          </div>
-          <div className="rl-board">
-            <div className="rl-column">
-              <strong>Triage</strong>
-              <span className="rl-ticket">P1 · login issue</span>
-              <span className="rl-ticket">P2 · search bug</span>
-            </div>
-            <div className="rl-column">
-              <strong>In progress</strong>
-              <span className="rl-ticket">SLA · 14 min</span>
-              <span className="rl-ticket">dependency ↗</span>
-            </div>
-            <div className="rl-column">
-              <strong>Resolved</strong>
-              <span className="rl-ticket">✓ API fix</span>
-              <span className="rl-ticket">✓ handoff</span>
-            </div>
-          </div>
-          <div className="rl-guard">
-            <span>◆</span><strong>valid transition</strong><i>✓</i>
-          </div>
-        </div>
-        <div className="jira-loop" aria-hidden="true">
-          <span>observe</span><i>→</i><span>act</span><i>→</i><span>reward</span>
-        </div>
-      </div>
-    );
+    return <JiraRLPlayground />;
   }
 
   if (kind === "search") {
@@ -323,20 +290,11 @@ export default function Home() {
 
         <ThemeToggle />
 
-        <a className="nav-cta" href="mailto:chiragaparadh@gmail.com">
-          Say hello <Arrow />
+        <a className="nav-cta" href="#contact">
+          Say hello <span className="nav-plane" aria-hidden="true">➤</span>
         </a>
 
-        <details className="mobile-nav">
-          <summary aria-label="Open navigation">Menu</summary>
-          <nav aria-label="Mobile navigation">
-            <a href="#about">About</a>
-            <a href="#experience">Experience</a>
-            <a href="#projects">Projects</a>
-            <a href="#proof">Proof</a>
-            <a href="mailto:chiragaparadh@gmail.com">Say hello ↗</a>
-          </nav>
-        </details>
+        <MobileNav />
       </header>
 
       <main id="main">
@@ -594,20 +552,18 @@ export default function Home() {
         <section className="contact" id="contact">
           <div className="contact-decoration contact-decoration--one" aria-hidden="true" />
           <div className="contact-decoration contact-decoration--two" aria-hidden="true" />
-          <p className="section-number">06 · Let’s talk</p>
-          <h2>Have a hard problem<br />with <em>real-world impact?</em></h2>
-          <p className="contact-intro">
-            I’m looking for Summer 2027 software engineering internships across backend systems,
-            cloud infrastructure, distributed systems, and applied AI.
-          </p>
-          <div className="contact-actions">
-            <a className="button button--dark" href="mailto:chiragaparadh@gmail.com?subject=Hello%20Chirag">
-              chiragaparadh@gmail.com <Arrow />
-            </a>
-            <a className="button button--paper" href="https://linkedin.com/in/chirag-aparadh" target="_blank" rel="noreferrer">
-              Connect on LinkedIn <Arrow />
+          <div className="contact-copy">
+            <p className="section-number">06 · Let’s talk</p>
+            <h2>Have a hard problem<br />with <em>real-world impact?</em></h2>
+            <p className="contact-intro">
+              I’m looking for Summer 2027 software engineering internships across backend systems,
+              cloud infrastructure, distributed systems, and applied AI.
+            </p>
+            <a className="contact-link" href="https://linkedin.com/in/chirag-aparadh" target="_blank" rel="noreferrer">
+              Or connect on LinkedIn <Arrow />
             </a>
           </div>
+          <ContactForm />
         </section>
       </main>
 

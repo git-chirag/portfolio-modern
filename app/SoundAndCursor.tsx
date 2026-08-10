@@ -1,15 +1,32 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type SafariAudioWindow = Window & typeof globalThis & {
   webkitAudioContext?: typeof AudioContext;
 };
 
+const pianoNotes = [
+  { label: "C", frequency: 261.63 },
+  { label: "D", frequency: 293.66 },
+  { label: "E", frequency: 329.63 },
+  { label: "F", frequency: 349.23 },
+  { label: "G", frequency: 392 },
+  { label: "A", frequency: 440 },
+  { label: "B", frequency: 493.88 },
+];
+
+const birdMessages = ["Pip says hi!", "Nice scroll!", "Found anything fun?", "Try the tiny piano!", "Good systems, good vibes."];
+
 export function SoundAndCursor() {
   const audioContextRef = useRef<AudioContext | null>(null);
   const cursorRef = useRef<HTMLDivElement | null>(null);
   const cursorTipRef = useRef<HTMLDivElement | null>(null);
+  const progressRef = useRef<HTMLDivElement | null>(null);
+  const birdTimerRef = useRef<number | null>(null);
+  const [pianoOpen, setPianoOpen] = useState(false);
+  const [birdMessage, setBirdMessage] = useState("Pip says hi!");
+  const [birdExcited, setBirdExcited] = useState(false);
 
   const getAudioContext = useCallback(() => {
     if (audioContextRef.current) return audioContextRef.current;
@@ -63,11 +80,24 @@ export function SoundAndCursor() {
     [getAudioContext],
   );
 
+  const cheerBird = useCallback((message: string, withChirp = true) => {
+    setBirdMessage(message);
+    setBirdExcited(true);
+    if (birdTimerRef.current) window.clearTimeout(birdTimerRef.current);
+    birdTimerRef.current = window.setTimeout(() => setBirdExcited(false), 1400);
+
+    if (withChirp) {
+      playTone(987.77, 0.1, 0.025, "sine");
+      window.setTimeout(() => playTone(1318.51, 0.12, 0.02, "sine"), 75);
+    }
+  }, [playTone]);
+
   useEffect(() => {
     const handleInteractiveClick = (event: PointerEvent) => {
       if (event.button !== 0) return;
       const target = event.target;
       if (!(target instanceof Element)) return;
+      if (target.closest("[data-piano-key]")) return;
 
       const noteSet = [523.25, 587.33, 659.25, 783.99];
       const note = noteSet[Math.abs(Math.round(event.clientX)) % noteSet.length];
@@ -78,6 +108,53 @@ export function SoundAndCursor() {
     window.addEventListener("pointerdown", handleInteractiveClick);
     return () => window.removeEventListener("pointerdown", handleInteractiveClick);
   }, [playTone]);
+
+  useEffect(() => {
+    const handleReward = (event: Event) => {
+      const message = (event as CustomEvent<{ message?: string }>).detail?.message ?? "Nice move!";
+      cheerBird(message);
+    };
+
+    const handleContactSent = (event: Event) => {
+      const message = (event as CustomEvent<{ message?: string }>).detail?.message ?? "Message away!";
+      cheerBird(message);
+    };
+
+    window.addEventListener("portfolio:reward", handleReward);
+    window.addEventListener("contact:sent", handleContactSent);
+    return () => {
+      window.removeEventListener("portfolio:reward", handleReward);
+      window.removeEventListener("contact:sent", handleContactSent);
+    };
+  }, [cheerBird]);
+
+  useEffect(() => {
+    const progress = progressRef.current;
+    if (!progress) return;
+
+    let frame = 0;
+    const updateProgress = () => {
+      const maximum = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+      const value = Math.min(Math.max(window.scrollY / maximum, 0), 1);
+      progress.style.setProperty("--scroll-progress", String(value));
+      progress.style.setProperty("--scroll-position", `${value * 100}%`);
+      frame = 0;
+    };
+
+    const requestUpdate = () => {
+      if (!frame) frame = window.requestAnimationFrame(updateProgress);
+    };
+
+    updateProgress();
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+
+    return () => {
+      window.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
 
   useEffect(() => {
     const finePointer = window.matchMedia("(pointer: fine)");
@@ -153,11 +230,73 @@ export function SoundAndCursor() {
     return () => {
       const context = audioContextRef.current;
       if (context && context.state !== "closed") void context.close();
+      if (birdTimerRef.current) window.clearTimeout(birdTimerRef.current);
     };
   }, []);
 
   return (
     <>
+      <div className="crayon-progress" ref={progressRef} aria-hidden="true">
+        <span /><i />
+      </div>
+
+      <button
+        className={`site-bird${birdExcited ? " is-excited" : ""}`}
+        type="button"
+        aria-label="Say hello to Pip, the portfolio bird"
+        onClick={() => cheerBird(birdMessages[Math.floor(Date.now() / 1000) % birdMessages.length])}
+      >
+        <span className="bird-speech" role="status">{birdMessage}</span>
+        <span className="bird-body" aria-hidden="true">
+          <i className="bird-eye" />
+          <i className="bird-beak" />
+          <span className="bird-wing bird-wing--front" />
+          <span className="bird-wing bird-wing--back" />
+          <span className="bird-tail" />
+        </span>
+      </button>
+
+      <aside className={`pocket-piano${pianoOpen ? " is-open" : ""}`} aria-label="Pocket piano">
+        <button
+          className="pocket-piano__tab"
+          type="button"
+          aria-expanded={pianoOpen}
+          aria-controls="pocket-piano-keys"
+          onClick={() => setPianoOpen((current) => !current)}
+        >
+          <span aria-hidden="true">♫</span>
+          Piano
+        </button>
+        <div className="pocket-piano__body" id="pocket-piano-keys">
+          <p>Hover or tap a key</p>
+          <div className="pocket-piano__keys">
+            {pianoNotes.map((note, index) => (
+              <button
+                className={`piano-key piano-key--${index + 1}`}
+                type="button"
+                key={note.label}
+                data-piano-key="true"
+                aria-label={`Play ${note.label} note`}
+                onPointerEnter={() => {
+                  if (audioContextRef.current?.state === "running") {
+                    playTone(note.frequency, 0.48, 0.045, "sine");
+                  }
+                }}
+                onPointerDown={() => playTone(note.frequency, 0.48, 0.045, "sine")}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    playTone(note.frequency, 0.48, 0.045, "sine");
+                  }
+                }}
+              >
+                <span>{note.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </aside>
+
       <div className="fun-cursor" ref={cursorRef} aria-hidden="true"><span /></div>
       <div className="fun-cursor-tip" ref={cursorTipRef} aria-hidden="true" />
     </>
