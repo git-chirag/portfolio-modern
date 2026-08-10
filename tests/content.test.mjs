@@ -75,6 +75,7 @@ test("the hero uses the fully drawn avatar while keeping the real-photo switch",
 test("education uses the original college marks", () => {
   assert.match(page, /umass-logo\.png/);
   assert.match(page, /rait-logo\.png/);
+  assert.match(styles, /translate\(-2%, 5%\) scale\(1\.4\)/);
 });
 
 test("the native scrollbar is hidden behind the compact custom progress marker", () => {

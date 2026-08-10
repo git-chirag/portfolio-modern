@@ -1980,7 +1980,7 @@ footer > a:last-child:hover::after {
 }
 
 .education-mark--rait img {
-  transform: scale(1.4);
+  transform: translate(-2%, 5%) scale(1.4);
 }
 
 .education-card p {
