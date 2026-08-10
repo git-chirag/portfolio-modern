@@ -1,5 +1,4 @@
 /* eslint-disable @next/next/no-img-element */
-import Image from "next/image";
 import { PortraitSwitcher } from "./PortraitSwitcher";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -43,10 +42,9 @@ const projects = [
     description:
       "An OpenEnv-compatible Jira simulation for training and evaluating LLM agents across ticket triage, assignment, prioritization, dependencies, SLA compliance, and resolution workflows.",
     highlights: [
-      "Validates agent decisions through a structured action space and guarded state-transition engine.",
-      "Runs isolated, reproducible REST and WebSocket episodes with seeded scenarios and concurrent agents.",
-      "Benchmarks random, rule-based, guarded-LLM, and raw-LLM policies across reward, completion, invalid actions, and step efficiency.",
-      "Generates reproducible chat-format demonstrations with leakage-safe training, validation, and test splits.",
+      "Guards every action with a structured state-transition engine that rejects illegal workflow changes.",
+      "Runs reproducible REST and WebSocket episodes with seeded scenarios and concurrent agents.",
+      "Benchmarks four policy types and generates leakage-safe chat demonstrations for training and evaluation.",
     ],
     technologies: ["Python", "FastAPI", "WebSockets", "OpenEnv", "Reinforcement Learning", "LLM Agents"],
     visual: "jira",
@@ -58,7 +56,11 @@ const projects = [
     kicker: "Distributed AI pipeline",
     description:
       "An asynchronous FastAPI and Celery system that generates CLIP embeddings for text-to-image retrieval, visual similarity search, and near-duplicate detection. Redis coordinates jobs, Qdrant indexes vectors, and S3 stores processed assets.",
-    highlights: [],
+    highlights: [
+      "Generates CLIP embeddings for text search, visual similarity, and near-duplicate detection.",
+      "Coordinates asynchronous processing through FastAPI, Celery, and Redis workers.",
+      "Indexes vectors in Qdrant while storing processed assets reliably in Amazon S3.",
+    ],
     technologies: ["FastAPI", "Celery", "CLIP", "Qdrant", "Redis", "AWS", "Docker"],
     visual: "search",
     href: "https://github.com/git-chirag/image_processor",
@@ -69,7 +71,11 @@ const projects = [
     kicker: "Published research · DApp",
     description:
       "A role-aware Ethereum application for transparent product listings, bidding, purchasing, and traceability across the supply chain.",
-    highlights: [],
+    highlights: [
+      "Models producer, distributor, retailer, and customer workflows with role-aware access.",
+      "Uses Solidity contracts to preserve bidding, purchasing, and product provenance on-chain.",
+      "Extends the ideas explored in my published IEEE research on blockchain supply chains.",
+    ],
     technologies: ["Ethereum", "Solidity", "React", "Tailwind"],
     visual: "chain",
     href: "https://github.com/git-chirag",
@@ -80,7 +86,11 @@ const projects = [
     kicker: "Location-aware mobile app",
     description:
       "A Flutter app for connection requests, live location sharing, and nearby meeting-place suggestions powered by Google Maps.",
-    highlights: [],
+    highlights: [
+      "Supports connection requests and permission-aware live location sharing between friends.",
+      "Suggests practical meeting places near the people joining through Google Maps.",
+      "Uses Flutter and Firebase for a responsive mobile experience with real-time updates.",
+    ],
     technologies: ["Flutter", "Dart", "Firebase", "Google Maps"],
     visual: "meetup",
     href: "https://github.com/git-chirag",
@@ -180,13 +190,37 @@ function Arrow() {
 function ProjectVisual({ kind, title }: { kind: string; title: string }) {
   if (kind === "jira") {
     return (
-      <div className="project-visual project-visual--jira">
-        <Image
-          src="/project-jirarl.webp"
-          alt={`Pastel ticket-workflow and reinforcement-learning illustration for ${title}`}
-          fill
-          sizes="(max-width: 900px) 100vw, 62vw"
-        />
+      <div className="project-visual project-visual--jira" role="img" aria-label={`Pastel reinforcement-learning ticket board illustration for ${title}`}>
+        <div className="rl-window" aria-hidden="true">
+          <div className="mock-window-bar">
+            <span /><span /><span />
+            <b>agent_episode_07</b>
+          </div>
+          <div className="rl-summary">
+            <span className="rl-agent"><i>AI</i><b>guarded agent</b></span>
+            <span className="rl-score"><i /> reward +8</span>
+          </div>
+          <div className="rl-board">
+            <div className="rl-column">
+              <strong>Triage</strong>
+              <span className="rl-ticket">P1 · login issue</span>
+              <span className="rl-ticket">P2 · search bug</span>
+            </div>
+            <div className="rl-column">
+              <strong>In progress</strong>
+              <span className="rl-ticket">SLA · 14 min</span>
+              <span className="rl-ticket">dependency ↗</span>
+            </div>
+            <div className="rl-column">
+              <strong>Resolved</strong>
+              <span className="rl-ticket">✓ API fix</span>
+              <span className="rl-ticket">✓ handoff</span>
+            </div>
+          </div>
+          <div className="rl-guard">
+            <span>◆</span><strong>valid transition</strong><i>✓</i>
+          </div>
+        </div>
         <div className="jira-loop" aria-hidden="true">
           <span>observe</span><i>→</i><span>act</span><i>→</i><span>reward</span>
         </div>
@@ -454,11 +488,9 @@ export default function Home() {
                   <p className="project-kicker">{project.kicker}</p>
                   <h3>{project.title}</h3>
                   <p>{project.description}</p>
-                  {project.highlights.length > 0 && (
-                    <ul className="project-highlights">
-                      {project.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}
-                    </ul>
-                  )}
+                  <ul className="project-highlights">
+                    {project.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}
+                  </ul>
                   <div className="tag-list">
                     {project.technologies.map((technology) => <span key={technology}>{technology}</span>)}
                   </div>

@@ -23,7 +23,14 @@ test("portfolio exposes working contact and resume destinations", () => {
 test("portfolio includes the JiraRL agent environment project", () => {
   assert.match(page, /title: "JiraRL"/);
   assert.match(page, /OpenEnv-compatible Jira simulation/);
-  assert.match(page, /project-jirarl\.webp/);
+  assert.match(page, /className="rl-window"/);
+  assert.doesNotMatch(page, /project-jirarl\.webp/);
+});
+
+test("every project uses the same bullet-description structure", () => {
+  assert.doesNotMatch(page, /highlights: \[\]/);
+  assert.match(page, /<ul className="project-highlights">/);
+  assert.doesNotMatch(page, /project\.highlights\.length > 0/);
 });
 
 test("metadata is portfolio-specific and the starter preview is gone", () => {
