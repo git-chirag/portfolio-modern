@@ -10,7 +10,7 @@ export function PortraitSwitcher() {
     <div className={`portrait-image portrait-image--switchable${showRealPhoto ? " is-real" : ""}`}>
       <div className="portrait-layer portrait-layer--avatar" aria-hidden={showRealPhoto}>
         <Image
-          src="/profile-avatar.webp"
+          src="/profile-avatar-v2.png"
           alt={showRealPhoto ? "" : "Illustrated portrait of Chirag Aparadh"}
           fill
           priority

@@ -99,9 +99,9 @@ export function ContactForm() {
         <div className="contact-form-footer">
           <p className={`contact-form-status is-${status}`} role="status" aria-live="polite">
             {status === "sending" && "Folding the plane…"}
-            {status === "success" && "Message sent — I’ll get back to you soon."}
+            {status === "success" && "Message sent. I’ll get back to you soon."}
             {status === "error" && "The plane got lost. Please try once more."}
-            {status === "idle" && "No email app required."}
+            {status === "idle" && "Your note goes straight to my inbox."}
           </p>
           <button className="button button--dark contact-submit" type="submit" disabled={isSending}>
             {isSending ? "Sending" : "Send message"}

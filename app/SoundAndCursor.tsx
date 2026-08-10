@@ -6,6 +6,12 @@ type SafariAudioWindow = Window & typeof globalThis & {
   webkitAudioContext?: typeof AudioContext;
 };
 
+type Guide = {
+  target: string;
+  message: string;
+  side: "left" | "right";
+};
+
 const pianoNotes = [
   { label: "C", frequency: 261.63 },
   { label: "D", frequency: 293.66 },
@@ -16,17 +22,66 @@ const pianoNotes = [
   { label: "B", frequency: 493.88 },
 ];
 
-const birdMessages = ["Pip says hi!", "Nice scroll!", "Found anything fun?", "Try the tiny piano!", "Good systems, good vibes."];
+const guideOrder = ["top", "about", "experience", "projects", "toolbox", "proof", "contact"] as const;
+
+const sectionGuides: Record<(typeof guideOrder)[number], Guide> = {
+  top: {
+    target: ".hero-highlight",
+    message: "Start here. Chirag builds the systems you do not see.",
+    side: "right",
+  },
+  about: {
+    target: "#about .about-grid",
+    message: "These numbers come from real systems in production.",
+    side: "left",
+  },
+  experience: {
+    target: "#experience .experience-card",
+    message: "This is where the backend miles add up.",
+    side: "right",
+  },
+  projects: {
+    target: "#projects .project-grid",
+    message: "Look at the projects. Every card has something to try.",
+    side: "left",
+  },
+  toolbox: {
+    target: "#toolbox .skill-groups",
+    message: "The toolbox behind the work lives here.",
+    side: "right",
+  },
+  proof: {
+    target: "#proof .proof-layout",
+    message: "A little proof before you move on.",
+    side: "left",
+  },
+  contact: {
+    target: "#contact .contact-form-shell",
+    message: "Want to talk? Send Chirag a note here.",
+    side: "right",
+  },
+};
 
 export function SoundAndCursor() {
   const audioContextRef = useRef<AudioContext | null>(null);
   const cursorRef = useRef<HTMLDivElement | null>(null);
   const cursorTipRef = useRef<HTMLDivElement | null>(null);
   const progressRef = useRef<HTMLDivElement | null>(null);
-  const birdTimerRef = useRef<number | null>(null);
+  const birdRef = useRef<HTMLButtonElement | null>(null);
+  const activeSectionRef = useRef("");
+  const hurryingRef = useRef(false);
+  const speechTimerRef = useRef<number | null>(null);
+  const excitedTimerRef = useRef<number | null>(null);
+  const arrivalTimerRef = useRef<number | null>(null);
+  const hurryTimerRef = useRef<number | null>(null);
+  const petTimerRef = useRef<number | null>(null);
   const [pianoOpen, setPianoOpen] = useState(false);
-  const [birdMessage, setBirdMessage] = useState("Pip says hi!");
+  const [birdMessage, setBirdMessage] = useState("Pip is your tiny tour guide.");
+  const [birdSpeaking, setBirdSpeaking] = useState(true);
   const [birdExcited, setBirdExcited] = useState(false);
+  const [birdHurrying, setBirdHurrying] = useState(false);
+  const [birdPetted, setBirdPetted] = useState(false);
+  const [birdFacingLeft, setBirdFacingLeft] = useState(true);
 
   const getAudioContext = useCallback(() => {
     if (audioContextRef.current) return audioContextRef.current;
@@ -80,24 +135,40 @@ export function SoundAndCursor() {
     [getAudioContext],
   );
 
-  const cheerBird = useCallback((message: string, withChirp = true) => {
+  const playPianoNote = useCallback((frequency: number) => {
+    playTone(frequency, 0.62, 0.11, "triangle");
+    window.setTimeout(() => playTone(frequency * 2, 0.34, 0.032, "sine"), 24);
+  }, [playTone]);
+
+  const speak = useCallback((message: string, duration = 2800, withChirp = false) => {
     setBirdMessage(message);
-    setBirdExcited(true);
-    if (birdTimerRef.current) window.clearTimeout(birdTimerRef.current);
-    birdTimerRef.current = window.setTimeout(() => setBirdExcited(false), 1400);
+    setBirdSpeaking(true);
+
+    if (speechTimerRef.current) window.clearTimeout(speechTimerRef.current);
+    speechTimerRef.current = window.setTimeout(() => setBirdSpeaking(false), duration);
 
     if (withChirp) {
-      playTone(987.77, 0.1, 0.025, "sine");
-      window.setTimeout(() => playTone(1318.51, 0.12, 0.02, "sine"), 75);
+      setBirdExcited(true);
+      if (excitedTimerRef.current) window.clearTimeout(excitedTimerRef.current);
+      excitedTimerRef.current = window.setTimeout(() => setBirdExcited(false), 1200);
+      playTone(987.77, 0.1, 0.03, "sine");
+      window.setTimeout(() => playTone(1318.51, 0.12, 0.025, "sine"), 75);
     }
   }, [playTone]);
+
+  const petBird = useCallback(() => {
+    setBirdPetted(true);
+    if (petTimerRef.current) window.clearTimeout(petTimerRef.current);
+    petTimerRef.current = window.setTimeout(() => setBirdPetted(false), 1300);
+    speak("Pip loves that!", 1900, true);
+  }, [speak]);
 
   useEffect(() => {
     const handleInteractiveClick = (event: PointerEvent) => {
       if (event.button !== 0) return;
       const target = event.target;
       if (!(target instanceof Element)) return;
-      if (target.closest("[data-piano-key]")) return;
+      if (target.closest("[data-piano-key], .site-bird")) return;
 
       const noteSet = [523.25, 587.33, 659.25, 783.99];
       const note = noteSet[Math.abs(Math.round(event.clientX)) % noteSet.length];
@@ -112,12 +183,12 @@ export function SoundAndCursor() {
   useEffect(() => {
     const handleReward = (event: Event) => {
       const message = (event as CustomEvent<{ message?: string }>).detail?.message ?? "Nice move!";
-      cheerBird(message);
+      speak(message, 2200, true);
     };
 
     const handleContactSent = (event: Event) => {
       const message = (event as CustomEvent<{ message?: string }>).detail?.message ?? "Message away!";
-      cheerBird(message);
+      speak(message, 2400, true);
     };
 
     window.addEventListener("portfolio:reward", handleReward);
@@ -126,26 +197,97 @@ export function SoundAndCursor() {
       window.removeEventListener("portfolio:reward", handleReward);
       window.removeEventListener("contact:sent", handleContactSent);
     };
-  }, [cheerBird]);
+  }, [speak]);
 
   useEffect(() => {
     const progress = progressRef.current;
-    if (!progress) return;
+    const bird = birdRef.current;
+    if (!progress || !bird) return;
+
+    const sections = guideOrder
+      .map((id) => document.getElementById(id))
+      .filter((section): section is HTMLElement => Boolean(section));
 
     let frame = 0;
-    const updateProgress = () => {
+    let lastY = window.scrollY;
+    let lastTime = performance.now();
+
+    const updateGuide = () => {
+      const now = performance.now();
+      const currentY = window.scrollY;
+      const elapsed = Math.max(now - lastTime, 16);
+      const distance = Math.abs(currentY - lastY);
+      const speed = distance / elapsed;
+
       const maximum = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
-      const value = Math.min(Math.max(window.scrollY / maximum, 0), 1);
+      const value = Math.min(Math.max(currentY / maximum, 0), 1);
       progress.style.setProperty("--scroll-progress", String(value));
       progress.style.setProperty("--scroll-position", `${value * 100}%`);
+
+      if (distance > 80 && speed > 1.35) {
+        if (!hurryingRef.current) speak("Wait for me!", 1000);
+        hurryingRef.current = true;
+        setBirdHurrying(true);
+        if (hurryTimerRef.current) window.clearTimeout(hurryTimerRef.current);
+        hurryTimerRef.current = window.setTimeout(() => {
+          hurryingRef.current = false;
+          setBirdHurrying(false);
+        }, 650);
+      }
+
+      lastY = currentY;
+      lastTime = now;
+
+      const focusLine = window.innerHeight * 0.42;
+      const activeSection = sections.find((section) => {
+        const rect = section.getBoundingClientRect();
+        return rect.top <= focusLine && rect.bottom >= focusLine;
+      }) ?? sections.reduce((closest, section) => {
+        const closestDistance = Math.abs(closest.getBoundingClientRect().top - focusLine);
+        const sectionDistance = Math.abs(section.getBoundingClientRect().top - focusLine);
+        return sectionDistance < closestDistance ? section : closest;
+      }, sections[0]);
+
+      const activeId = activeSection?.id as (typeof guideOrder)[number] | undefined;
+      const guide = activeId ? sectionGuides[activeId] : sectionGuides.top;
+      const target = document.querySelector<HTMLElement>(guide.target) ?? activeSection;
+
+      if (activeId && activeId !== activeSectionRef.current) {
+        activeSectionRef.current = activeId;
+        setBirdSpeaking(false);
+        if (arrivalTimerRef.current) window.clearTimeout(arrivalTimerRef.current);
+        arrivalTimerRef.current = window.setTimeout(() => speak(guide.message, 3200), 820);
+      }
+
+      if (target) {
+        const targetRect = target.getBoundingClientRect();
+        const birdWidth = window.innerWidth <= 680 ? 58 : 66;
+        const birdHeight = 58;
+        const horizontalPadding = window.innerWidth <= 680 ? 12 : 18;
+        const x = guide.side === "right"
+          ? window.innerWidth - birdWidth - horizontalPadding
+          : horizontalPadding;
+        const visibleTop = Math.max(targetRect.top, 92);
+        const visibleBottom = Math.min(targetRect.bottom, window.innerHeight - 28);
+        const visibleHeight = Math.max(visibleBottom - visibleTop, 80);
+        const y = Math.min(
+          Math.max(visibleTop + Math.min(visibleHeight * 0.2, 70), 108),
+          window.innerHeight - birdHeight - 38,
+        );
+
+        bird.style.setProperty("--bird-x", `${x}px`);
+        bird.style.setProperty("--bird-y", `${y}px`);
+        setBirdFacingLeft(guide.side === "right");
+      }
+
       frame = 0;
     };
 
     const requestUpdate = () => {
-      if (!frame) frame = window.requestAnimationFrame(updateProgress);
+      if (!frame) frame = window.requestAnimationFrame(updateGuide);
     };
 
-    updateProgress();
+    updateGuide();
     window.addEventListener("scroll", requestUpdate, { passive: true });
     window.addEventListener("resize", requestUpdate);
 
@@ -154,7 +296,7 @@ export function SoundAndCursor() {
       window.removeEventListener("resize", requestUpdate);
       if (frame) window.cancelAnimationFrame(frame);
     };
-  }, []);
+  }, [speak]);
 
   useEffect(() => {
     const finePointer = window.matchMedia("(pointer: fine)");
@@ -190,8 +332,12 @@ export function SoundAndCursor() {
 
     const handleOver = (event: PointerEvent) => {
       const target = event.target;
-      const isInteractive = target instanceof Element && Boolean(target.closest("a, button, summary"));
+      const isElement = target instanceof Element;
+      const isInteractive = isElement && Boolean(target.closest("a, button, summary"));
+      const isPetting = isElement && Boolean(target.closest(".site-bird"));
       cursor.classList.toggle("is-hovering", isInteractive);
+      cursor.classList.toggle("is-petting", isPetting);
+      tip.classList.toggle("is-petting", isPetting);
     };
 
     const handleDown = () => {
@@ -226,12 +372,12 @@ export function SoundAndCursor() {
     };
   }, []);
 
-  useEffect(() => {
-    return () => {
-      const context = audioContextRef.current;
-      if (context && context.state !== "closed") void context.close();
-      if (birdTimerRef.current) window.clearTimeout(birdTimerRef.current);
-    };
+  useEffect(() => () => {
+    const context = audioContextRef.current;
+    if (context && context.state !== "closed") void context.close();
+    [speechTimerRef, excitedTimerRef, arrivalTimerRef, hurryTimerRef, petTimerRef].forEach((timer) => {
+      if (timer.current) window.clearTimeout(timer.current);
+    });
   }, []);
 
   return (
@@ -241,12 +387,18 @@ export function SoundAndCursor() {
       </div>
 
       <button
-        className={`site-bird${birdExcited ? " is-excited" : ""}`}
+        className={`site-bird${birdFacingLeft ? " is-facing-left" : ""}${birdSpeaking ? " is-speaking" : ""}${birdExcited ? " is-excited" : ""}${birdHurrying ? " is-hurrying" : ""}${birdPetted ? " is-petted" : ""}`}
         type="button"
-        aria-label="Say hello to Pip, the portfolio bird"
-        onClick={() => cheerBird(birdMessages[Math.floor(Date.now() / 1000) % birdMessages.length])}
+        ref={birdRef}
+        aria-label="Pet Pip, the portfolio bird and tour guide"
+        onPointerEnter={() => {
+          if (window.matchMedia("(hover: hover)").matches) petBird();
+        }}
+        onClick={petBird}
       >
         <span className="bird-speech" role="status">{birdMessage}</span>
+        <span className="bird-speed-lines" aria-hidden="true"><i /><i /><i /></span>
+        <span className="bird-hearts" aria-hidden="true"><i>♥</i><i>♥</i><i>♥</i></span>
         <span className="bird-body" aria-hidden="true">
           <i className="bird-eye" />
           <i className="bird-beak" />
@@ -278,15 +430,13 @@ export function SoundAndCursor() {
                 data-piano-key="true"
                 aria-label={`Play ${note.label} note`}
                 onPointerEnter={() => {
-                  if (audioContextRef.current?.state === "running") {
-                    playTone(note.frequency, 0.48, 0.045, "sine");
-                  }
+                  if (audioContextRef.current?.state === "running") playPianoNote(note.frequency);
                 }}
-                onPointerDown={() => playTone(note.frequency, 0.48, 0.045, "sine")}
+                onPointerDown={() => playPianoNote(note.frequency)}
                 onKeyDown={(event) => {
                   if (event.key === "Enter" || event.key === " ") {
                     event.preventDefault();
-                    playTone(note.frequency, 0.48, 0.045, "sine");
+                    playPianoNote(note.frequency);
                   }
                 }}
               >

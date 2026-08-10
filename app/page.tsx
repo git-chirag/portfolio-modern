@@ -4,12 +4,13 @@ import { ThemeToggle } from "./ThemeToggle";
 import { JiraRLPlayground } from "./JiraRLPlayground";
 import { ContactForm } from "./ContactForm";
 import { MobileNav } from "./MobileNav";
+import { MeetupPlayground, SearchPlayground, SupplyChainPlayground } from "./ProjectPlaygrounds";
 
 const experience = [
   {
     role: "Software Engineer · Associate Consultant",
     company: "Oracle Financial Services Software",
-    period: "Jul 2023 — Present",
+    period: "Jul 2023 to Present",
     location: "Mumbai, India",
     intro:
       "Building and modernising backend systems for one of India’s largest banking platforms.",
@@ -25,7 +26,7 @@ const experience = [
   {
     role: "Machine Learning Engineer · Intern",
     company: "TechCiti",
-    period: "Aug 2021 — Sep 2021",
+    period: "Aug 2021 to Sep 2021",
     location: "Remote",
     intro:
       "Designed a loan eligibility product and the machine-learning workflow behind it.",
@@ -196,76 +197,14 @@ function ProjectVisual({ kind, title }: { kind: string; title: string }) {
   }
 
   if (kind === "search") {
-    return (
-      <div className="project-visual project-visual--search" role="img" aria-label={`Pastel search interface illustration for ${title}`}>
-        <div className="search-window" aria-hidden="true">
-          <div className="mock-window-bar">
-            <span /><span /><span />
-            <b>image_search</b>
-          </div>
-          <div className="mock-search-bar">
-            <span>⌕</span>
-            <strong>find similar images</strong>
-            <kbd>↵</kbd>
-          </div>
-          <div className="mock-result-grid">
-            {Array.from({ length: 6 }, (_, index) => <span key={index}><i /></span>)}
-          </div>
-        </div>
-        <div className="pipeline-row" aria-hidden="true">
-          <span>FastAPI</span><i>→</i><span>CLIP</span><i>→</i><span>Qdrant</span>
-        </div>
-      </div>
-    );
+    return <SearchPlayground title={title} />;
   }
 
   if (kind === "chain") {
-    return (
-      <div className="project-visual project-visual--chain" role="img" aria-label={`Pastel supply-chain flow illustration for ${title}`}>
-        <div className="chain-title" aria-hidden="true">
-          <span>LIVE LEDGER</span>
-          <strong>Product journey</strong>
-        </div>
-        <div className="chain-track" aria-hidden="true">
-          {["Producer", "Distributor", "Retailer", "Consumer"].map((step, index) => (
-            <div className="chain-step" key={step}>
-              <span>0{index + 1}</span>
-              <b>{step}</b>
-            </div>
-          ))}
-        </div>
-        <div className="ledger-stack" aria-hidden="true">
-          <span>Block 0241 · verified</span>
-          <span>Block 0242 · verified</span>
-          <span>Block 0243 · verified</span>
-        </div>
-      </div>
-    );
+    return <SupplyChainPlayground title={title} />;
   }
 
-  return (
-    <div className="project-visual project-visual--meetup" role="img" aria-label={`Pastel meetup map illustration for ${title}`}>
-      <div className="map-backdrop" aria-hidden="true">
-        <span className="map-pin map-pin--one">A</span>
-        <span className="map-pin map-pin--two">B</span>
-        <span className="map-pin map-pin--three">C</span>
-      </div>
-      <div className="meetup-phone" aria-hidden="true">
-        <span className="phone-speaker" />
-        <div className="phone-map">
-          <i className="route route--one" />
-          <i className="route route--two" />
-          <span className="phone-pin">★</span>
-        </div>
-        <div className="meeting-sheet">
-          <strong>Sunday coffee?</strong>
-          <span>3 places nearby</span>
-        </div>
-      </div>
-      <span className="meetup-bubble meetup-bubble--yes" aria-hidden="true">I’m in!</span>
-      <span className="meetup-bubble meetup-bubble--time" aria-hidden="true">4:30?</span>
-    </div>
-  );
+  return <MeetupPlayground title={title} />;
 }
 
 export default function Home() {
@@ -307,7 +246,7 @@ export default function Home() {
             </h1>
             <p className="hero-intro">
               I’m <strong>Chirag Aparadh</strong>, a software engineer working on reliable backend,
-              distributed, and AI-powered systems—from banking platforms to multimodal search.
+              distributed, and AI-powered systems, from banking platforms to multimodal search.
             </p>
             <div className="hero-actions">
               <a className="button button--dark" href="#projects">
@@ -505,7 +444,7 @@ export default function Home() {
           <div className="proof-layout">
             <div className="education-stack">
               <article className="education-card education-card--umass">
-                <span className="education-year">2026 — 2028</span>
+                <span className="education-year">2026 to 2028</span>
                 <div className="education-mark">UM</div>
                 <div>
                   <p>University of Massachusetts Amherst</p>
@@ -514,7 +453,7 @@ export default function Home() {
                 </div>
               </article>
               <article className="education-card education-card--rait">
-                <span className="education-year">2019 — 2023</span>
+                <span className="education-year">2019 to 2023</span>
                 <div className="education-mark">RA</div>
                 <div>
                   <p>Ramrao Adik Institute of Technology</p>

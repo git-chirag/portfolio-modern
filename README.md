@@ -1,4 +1,4 @@
-# Chirag Aparadh — Portfolio
+# Chirag Aparadh | Portfolio
 
 A responsive personal portfolio focused on backend engineering, distributed
 systems, cloud infrastructure, and applied AI.

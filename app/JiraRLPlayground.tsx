@@ -69,6 +69,7 @@ export function JiraRLPlayground() {
       role="group"
       aria-label="Interactive reinforcement-learning ticket board. Drag or click the pink ticket to move it through the workflow."
     >
+      <span className="interaction-hint">Drag or tap</span>
       <div className="rl-window">
         <div className="mock-window-bar" aria-hidden="true">
           <span /><span /><span />

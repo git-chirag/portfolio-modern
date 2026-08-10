@@ -7,7 +7,7 @@ const metadataBase = new URL(vercelHost ? `https://${vercelHost}` : "http://loca
 
 export const metadata: Metadata = {
   metadataBase,
-  title: "Chirag Aparadh — Software Engineer",
+  title: "Chirag Aparadh | Software Engineer",
   description:
     "Software engineer building reliable backend, distributed, and AI-powered systems. Incoming M.S. Computer Science student at UMass Amherst.",
   keywords: [
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   authors: [{ name: "Chirag Aparadh" }],
   openGraph: {
     type: "website",
-    title: "Chirag Aparadh — Software Engineer",
+    title: "Chirag Aparadh | Software Engineer",
     description: "I build the systems behind the screen.",
     siteName: "Chirag Aparadh",
     images: [
@@ -29,13 +29,13 @@ export const metadata: Metadata = {
         url: "/og.png",
         width: 1747,
         height: 909,
-        alt: "Chirag Aparadh — I build the systems behind the screen.",
+        alt: "Chirag Aparadh | I build the systems behind the screen.",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Chirag Aparadh — Software Engineer",
+    title: "Chirag Aparadh | Software Engineer",
     description: "I build the systems behind the screen.",
     images: ["/og.png"],
   },
