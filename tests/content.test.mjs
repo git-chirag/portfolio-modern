@@ -69,6 +69,18 @@ test("the hero uses the fully drawn avatar while keeping the real-photo switch",
   assert.match(portraitSwitcher, /profile-avatar-v2\.png/);
   assert.match(portraitSwitcher, /profile\.jpg/);
   assert.doesNotMatch(portraitSwitcher, /profile-avatar\.webp/);
+  assert.match(styles, /object-position: 50% 11%/);
+});
+
+test("education uses the original college marks", () => {
+  assert.match(page, /umass-logo\.png/);
+  assert.match(page, /rait-logo\.png/);
+});
+
+test("the native scrollbar is hidden behind the compact custom progress marker", () => {
+  assert.match(styles, /scrollbar-width: none/);
+  assert.match(styles, /height: min\(176px, 26vh\)/);
+  assert.doesNotMatch(styles, /clip-path: polygon\(26% 0, 84% 0/);
 });
 
 test("mobile navigation closes after selecting a section", () => {

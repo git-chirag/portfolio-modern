@@ -445,7 +445,9 @@ export default function Home() {
             <div className="education-stack">
               <article className="education-card education-card--umass">
                 <span className="education-year">2026 to 2028</span>
-                <div className="education-mark">UM</div>
+                <div className="education-mark education-mark--umass">
+                  <img src="/umass-logo.png" alt="University of Massachusetts Amherst logo" />
+                </div>
                 <div>
                   <p>University of Massachusetts Amherst</p>
                   <h3>M.S. in Computer Science</h3>
@@ -454,7 +456,9 @@ export default function Home() {
               </article>
               <article className="education-card education-card--rait">
                 <span className="education-year">2019 to 2023</span>
-                <div className="education-mark">RA</div>
+                <div className="education-mark education-mark--rait">
+                  <img src="/rait-logo.png" alt="D. Y. Patil University logo" />
+                </div>
                 <div>
                   <p>Ramrao Adik Institute of Technology</p>
                   <h3>B.Tech in Computer Science & Engineering</h3>
