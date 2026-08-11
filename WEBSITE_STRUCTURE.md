@@ -8,6 +8,18 @@ lists, and optional playful features now live in one file:
 Edit that file first. The page, metadata, contact destination, bird, piano,
 cursor, and scroll indicator read from it automatically.
 
+## Default color theme
+
+Inside `siteConfig.appearance`, set:
+
+```ts
+defaultTheme: "light",
+```
+
+Use `"light"` or `"dark"`. This controls the first visit when the browser has
+no saved theme choice. A visitor who uses the theme button keeps their saved
+choice on later visits.
+
 ## Quick feature switches
 
 At the top of `app/siteConfig.ts`, find `featureFlags`:
@@ -38,6 +50,7 @@ All entries below are inside `siteConfig` in `app/siteConfig.ts`.
 | Config area | What it controls |
 | --- | --- |
 | `identity` | Name, email, location, GitHub, LinkedIn, resume path, footer line |
+| `appearance` | Default light or dark theme for visitors without a saved choice |
 | `seo` | Browser title, search description, social description, keywords |
 | `hero` | Status pill, main headline, introduction, current role card, floating metrics |
 | `about` | About introduction, main statement, supporting copy, three metric cards |

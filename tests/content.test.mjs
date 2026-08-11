@@ -133,9 +133,11 @@ test("metadata is portfolio-specific and the starter preview is gone", () => {
   assert.doesNotMatch(layout, /Starter Project|codex-preview/);
 });
 
-test("dark mode follows the system, persists a choice, and has a visible control", () => {
+test("default theme is configurable, persists a choice, and has a visible control", () => {
   assert.match(page, /<ThemeToggle \/>/);
   assert.match(layout, /prefers-color-scheme: dark/);
+  assert.match(config, /defaultTheme: "light"/);
+  assert.match(layout, /JSON\.stringify\(siteConfig\.appearance\.defaultTheme\)/);
   assert.match(themeToggle, /chirag-theme/);
   assert.match(themeToggle, /aria-label="Toggle color theme"/);
   assert.match(styles, /\[data-theme="dark"\]/);

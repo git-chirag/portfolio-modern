@@ -1,4 +1,5 @@
 export type FeatureFlagValue = "y" | "n";
+export type DefaultTheme = "light" | "dark";
 export type FeatureFlagName =
   | "bird"
   | "piano"
@@ -79,6 +80,9 @@ export const siteConfig: {
     resume: string;
     footerLine: string;
   };
+  appearance: {
+    defaultTheme: DefaultTheme;
+  };
   seo: {
     title: string;
     description: string;
@@ -130,6 +134,9 @@ export const siteConfig: {
     linkedin: "https://linkedin.com/in/chirag-aparadh",
     resume: "/resume.pdf",
     footerLine: "Backend engineer. Systems thinker. Curious human.",
+  },
+  appearance: {
+    defaultTheme: "light",
   },
   seo: {
     title: "Chirag Aparadh | Software Engineer",

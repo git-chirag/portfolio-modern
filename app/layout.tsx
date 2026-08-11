@@ -52,7 +52,7 @@ const themeScript = `(() => {
     const saved = localStorage.getItem("chirag-theme");
     const theme = saved === "dark" || saved === "light"
       ? saved
-      : matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      : ${JSON.stringify(siteConfig.appearance.defaultTheme)};
     document.documentElement.dataset.theme = theme;
     document.documentElement.style.colorScheme = theme;
   } catch {}
