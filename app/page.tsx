@@ -10,12 +10,12 @@ const experience = [
   {
     role: "Software Engineer · Associate Consultant",
     company: "Oracle Financial Services Software",
-    period: "Jul 2023 to Present",
+    period: "Jul 2023 to Aug 2026",
     location: "Mumbai, India",
     intro:
-      "Building and modernising backend systems for one of India’s largest banking platforms.",
+      "Built and modernised backend systems for one of India’s largest banking platforms.",
     highlights: [
-      "Maintain core services supporting ~2M+ daily active users with 99.99% uptime.",
+      "Maintained core services supporting ~2M+ daily active users with 99.99% uptime.",
       "Implemented BioCatch bot detection and step-up authentication across ~150K daily merchant transactions.",
       "Built Kafka-based transaction acknowledgement flows for external broker integrations.",
       "Translated legacy, UI-driven banking workflows into validated backend service APIs.",
@@ -46,11 +46,13 @@ const projects = [
     description:
       "An OpenEnv-compatible Jira simulation for training and evaluating LLM agents across ticket triage, assignment, prioritization, dependencies, SLA compliance, and resolution workflows.",
     highlights: [
-      "Guards every action with a structured state-transition engine that rejects illegal workflow changes.",
-      "Runs reproducible REST and WebSocket episodes with seeded scenarios and concurrent agents.",
-      "Benchmarks four policy types and generates leakage-safe chat demonstrations for training and evaluation.",
+      "Built a stateful, OpenEnv-compatible Jira workflow simulator with structured agent actions, isolated episodes, dependency constraints, deterministic task generation, and executable reward functions.",
+      "Generated and validated 3,500 hint-free procedural training decisions with disjoint train, validation, and test seeds, publishing reproducible datasets and model adapters to Hugging Face.",
+      "Fine-tuned Qwen3-0.6B using 4-bit QLoRA, achieving 100% completion across 60 held-out in-distribution workflow episodes, with 500/500 productive transitions and zero invalid actions.",
+      "Implemented environment-backed GRPO with checkpoint recovery, balanced rewards, neutral rollouts, behavioral audits, and automated promotion gates.",
+      "Diagnosed action collapse and zero-gradient RL optimization using raw trajectories, candidate reward variance, entropy, and gradient statistics; currently extending evaluation to out-of-distribution workflows and recovery states.",
     ],
-    technologies: ["Python", "FastAPI", "WebSockets", "OpenEnv", "Reinforcement Learning", "LLM Agents"],
+    technologies: ["Python", "FastAPI", "OpenEnv", "Qwen3", "QLoRA", "GRPO", "Hugging Face"],
     visual: "jira",
     href: "https://github.com/git-chirag",
     className: "project-card--hero project-card--jira",
@@ -239,7 +241,7 @@ export default function Home() {
       <main id="main">
         <section className="hero" id="top">
           <div className="hero-copy">
-            <p className="eyebrow"><span /> Incoming M.S. CS @ UMass Amherst · Fall 2026</p>
+            <p className="eyebrow"><span /> M.S. CS @ UMass Amherst · Class of 2028</p>
             <h1>
               I build the systems
               <span className="hero-highlight">behind the screen.</span>
@@ -271,7 +273,7 @@ export default function Home() {
               <PortraitSwitcher />
               <div className="portrait-caption">
                 <span>Currently</span>
-                <strong>Software Engineer @ Oracle</strong>
+                <strong>M.S. CS @ UMass Amherst</strong>
               </div>
             </div>
             <div className="float-card float-card--users">
@@ -316,8 +318,8 @@ export default function Home() {
               <span className="card-label">What I care about</span>
               <h3>Software people can trust when the stakes are real.</h3>
               <p>
-                At Oracle Financial Services Software, I work on core banking services used at
-                national scale. Outside work, I explore retrieval systems, distributed workloads,
+                At Oracle Financial Services Software, I worked on core banking services used at
+                national scale. I now explore retrieval systems, distributed workloads,
                 and how applied AI can solve concrete product problems.
               </p>
             </article>
@@ -451,7 +453,7 @@ export default function Home() {
                 <div>
                   <p>University of Massachusetts Amherst</p>
                   <h3>M.S. in Computer Science</h3>
-                  <span>Incoming · Fall 2026</span>
+                  <span>Currently attending · Class of 2028</span>
                 </div>
               </article>
               <article className="education-card education-card--rait">

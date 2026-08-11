@@ -13,6 +13,7 @@ const portraitSwitcher = await readFile(new URL("../app/PortraitSwitcher.tsx", i
 const mobileNav = await readFile(new URL("../app/MobileNav.tsx", import.meta.url), "utf8");
 const styles = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
 const readme = await readFile(new URL("../README.md", import.meta.url), "utf8");
+const resumeBuilder = await readFile(new URL("../scripts/build_resume.py", import.meta.url), "utf8");
 
 test("portfolio contains the primary content sections", () => {
   for (const section of ["about", "experience", "projects", "toolbox", "proof", "contact"]) {
@@ -35,10 +36,28 @@ test("portfolio exposes working contact and resume destinations", () => {
 test("portfolio includes the JiraRL agent environment project", () => {
   assert.match(page, /title: "JiraRL"/);
   assert.match(page, /OpenEnv-compatible Jira simulation/);
+  assert.match(page, /3,500 hint-free procedural training decisions/);
+  assert.match(page, /100% completion across 60 held-out/);
+  assert.match(page, /environment-backed GRPO/);
   assert.match(page, /<JiraRLPlayground \/>/);
   assert.match(jiraPlayground, /className="rl-window"/);
   assert.match(jiraPlayground, /portfolio:reward/);
   assert.doesNotMatch(page, /project-jirarl\.webp/);
+});
+
+test("career and education status reflect August 2026", () => {
+  assert.match(page, /Jul 2023 to Aug 2026/);
+  assert.match(page, /M\.S\. CS @ UMass Amherst · Class of 2028/);
+  assert.match(page, /Currently attending · Class of 2028/);
+  assert.doesNotMatch(page, /Incoming M\.S\.|Incoming · Fall 2026|Jul 2023 to Present/);
+  assert.doesNotMatch(layout, /Incoming M\.S\./);
+});
+
+test("downloadable resume source carries the updated JiraRL and timeline details", () => {
+  assert.match(resumeBuilder, /3,500 hint-free procedural training decisions/);
+  assert.match(resumeBuilder, /100% completion<\/b> across 60 held-out/);
+  assert.match(resumeBuilder, /Jul 2023 - Aug 2026/);
+  assert.match(resumeBuilder, /Currently attending/);
 });
 
 test("portfolio includes the playful interactive companions", () => {
@@ -111,7 +130,7 @@ test("dark mode follows the system, persists a choice, and has a visible control
 
 test("user-facing source copy does not contain em dashes", () => {
   const emDash = String.fromCodePoint(8212);
-  for (const source of [page, layout, contactForm, interactions, projectPlaygrounds, readme]) {
+  for (const source of [page, layout, contactForm, interactions, projectPlaygrounds, readme, resumeBuilder]) {
     assert.ok(!source.includes(emDash));
   }
 });

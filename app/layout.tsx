@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   metadataBase,
   title: "Chirag Aparadh | Software Engineer",
   description:
-    "Software engineer building reliable backend, distributed, and AI-powered systems. Incoming M.S. Computer Science student at UMass Amherst.",
+    "Software engineer building reliable backend, distributed, and AI-powered systems. M.S. Computer Science student at UMass Amherst.",
   keywords: [
     "Chirag Aparadh",
     "Software Engineer",
