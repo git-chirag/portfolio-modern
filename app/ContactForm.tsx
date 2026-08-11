@@ -2,10 +2,11 @@
 
 import type { FormEvent } from "react";
 import { useEffect, useRef, useState } from "react";
+import { siteConfig } from "./siteConfig";
 
 type FormStatus = "idle" | "sending" | "success" | "error";
 
-const contactEndpoint = "https://formsubmit.co/ajax/chiragaparadh@gmail.com";
+const contactEndpoint = `https://formsubmit.co/ajax/${siteConfig.identity.email}`;
 
 export function ContactForm() {
   const [status, setStatus] = useState<FormStatus>("idle");

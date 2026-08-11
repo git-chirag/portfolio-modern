@@ -5,195 +5,27 @@ import { JiraRLPlayground } from "./JiraRLPlayground";
 import { ContactForm } from "./ContactForm";
 import { MobileNav } from "./MobileNav";
 import { MeetupPlayground, SearchPlayground, SupplyChainPlayground } from "./ProjectPlaygrounds";
+import { siteConfig, type ProjectVisualKind } from "./siteConfig";
 
-const experience = [
-  {
-    role: "Software Engineer · Associate Consultant",
-    company: "Oracle Financial Services Software",
-    period: "Jul 2023 to Aug 2026",
-    location: "Mumbai, India",
-    intro:
-      "Built and modernised backend systems for one of India’s largest banking platforms.",
-    highlights: [
-      "Maintained core services supporting ~2M+ daily active users with 99.99% uptime.",
-      "Implemented BioCatch bot detection and step-up authentication across ~150K daily merchant transactions.",
-      "Built Kafka-based transaction acknowledgement flows for external broker integrations.",
-      "Translated legacy, UI-driven banking workflows into validated backend service APIs.",
-    ],
-    stack: ["Java", "Java EE", "Kafka", "Oracle DB", "REST APIs", "WebSphere"],
-    color: "coral",
-  },
-  {
-    role: "Machine Learning Engineer · Intern",
-    company: "TechCiti",
-    period: "Aug 2021 to Sep 2021",
-    location: "Remote",
-    intro:
-      "Designed a loan eligibility product and the machine-learning workflow behind it.",
-    highlights: [
-      "Trained a logistic regression model with 92% test accuracy.",
-      "Built authentication, profile management, and prediction modules for the web application.",
-    ],
-    stack: ["Python", "Pandas", "NumPy", "Scikit-learn"],
-    color: "mint",
-  },
-];
-
-const projects = [
-  {
-    title: "JiraRL",
-    kicker: "Stateful RL environment · OpenEnv",
-    description:
-      "An OpenEnv-compatible Jira simulation for training and evaluating LLM agents across ticket triage, assignment, prioritization, dependencies, SLA compliance, and resolution workflows.",
-    highlights: [
-      "Built a stateful, OpenEnv-compatible Jira workflow simulator with structured agent actions, isolated episodes, dependency constraints, deterministic task generation, and executable reward functions.",
-      "Generated and validated 3,500 hint-free procedural training decisions with disjoint train, validation, and test seeds, publishing reproducible datasets and model adapters to Hugging Face.",
-      "Fine-tuned Qwen3-0.6B using 4-bit QLoRA, achieving 100% completion across 60 held-out in-distribution workflow episodes, with 500/500 productive transitions and zero invalid actions.",
-      "Implemented environment-backed GRPO with checkpoint recovery, balanced rewards, neutral rollouts, behavioral audits, and automated promotion gates.",
-      "Diagnosed action collapse and zero-gradient RL optimization using raw trajectories, candidate reward variance, entropy, and gradient statistics; currently extending evaluation to out-of-distribution workflows and recovery states.",
-    ],
-    technologies: ["Python", "FastAPI", "OpenEnv", "Qwen3", "QLoRA", "GRPO", "Hugging Face"],
-    visual: "jira",
-    href: "https://github.com/git-chirag",
-    className: "project-card--hero project-card--jira",
-  },
-  {
-    title: "Multimodal Image Search",
-    kicker: "Distributed AI pipeline",
-    description:
-      "An asynchronous FastAPI and Celery system that generates CLIP embeddings for text-to-image retrieval, visual similarity search, and near-duplicate detection. Redis coordinates jobs, Qdrant indexes vectors, and S3 stores processed assets.",
-    highlights: [
-      "Generates CLIP embeddings for text search, visual similarity, and near-duplicate detection.",
-      "Coordinates asynchronous processing through FastAPI, Celery, and Redis workers.",
-      "Indexes vectors in Qdrant while storing processed assets reliably in Amazon S3.",
-    ],
-    technologies: ["FastAPI", "Celery", "CLIP", "Qdrant", "Redis", "AWS", "Docker"],
-    visual: "search",
-    href: "https://github.com/git-chirag/image_processor",
-    className: "project-card--hero",
-  },
-  {
-    title: "Blockchain Supply Chain",
-    kicker: "Published research · DApp",
-    description:
-      "A role-aware Ethereum application for transparent product listings, bidding, purchasing, and traceability across the supply chain.",
-    highlights: [
-      "Models producer, distributor, retailer, and customer workflows with role-aware access.",
-      "Uses Solidity contracts to preserve bidding, purchasing, and product provenance on-chain.",
-      "Extends the ideas explored in my published IEEE research on blockchain supply chains.",
-    ],
-    technologies: ["Ethereum", "Solidity", "React", "Tailwind"],
-    visual: "chain",
-    href: "https://github.com/git-chirag",
-    className: "project-card--yellow",
-  },
-  {
-    title: "Social Meetup",
-    kicker: "Location-aware mobile app",
-    description:
-      "A Flutter app for connection requests, live location sharing, and nearby meeting-place suggestions powered by Google Maps.",
-    highlights: [
-      "Supports connection requests and permission-aware live location sharing between friends.",
-      "Suggests practical meeting places near the people joining through Google Maps.",
-      "Uses Flutter and Firebase for a responsive mobile experience with real-time updates.",
-    ],
-    technologies: ["Flutter", "Dart", "Firebase", "Google Maps"],
-    visual: "meetup",
-    href: "https://github.com/git-chirag",
-    className: "project-card--pink",
-  },
-];
-
-const skillGroups = [
-  {
-    label: "Languages",
-    items: ["Java", "Python", "C", "JavaScript", "SQL"],
-    color: "peach",
-  },
-  {
-    label: "Backend & systems",
-    items: ["Java EE", "FastAPI", "Django", "REST APIs", "Microservices", "Kafka", "Celery"],
-    color: "sky",
-  },
-  {
-    label: "Data & AI",
-    items: ["PyTorch", "CLIP", "Qdrant", "Redis", "Pandas", "Scikit-learn"],
-    color: "pink",
-  },
-  {
-    label: "Cloud & delivery",
-    items: ["AWS", "Docker", "Kubernetes", "Jenkins", "Linux", "ECS", "ECR", "S3"],
-    color: "mint",
-  },
-  {
-    label: "Databases",
-    items: ["Oracle Database", "MySQL", "MongoDB", "Firebase"],
-    color: "lilac",
-  },
-];
-
-const deviconBase = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons";
-
-const skillIcons: Record<string, string> = {
-  Java: `${deviconBase}/java/java-original.svg`,
-  Python: `${deviconBase}/python/python-original.svg`,
-  C: `${deviconBase}/c/c-original.svg`,
-  JavaScript: `${deviconBase}/javascript/javascript-original.svg`,
-  "Java EE": `${deviconBase}/java/java-original.svg`,
-  FastAPI: `${deviconBase}/fastapi/fastapi-original.svg`,
-  Django: `${deviconBase}/django/django-plain.svg`,
-  Kafka: `${deviconBase}/apachekafka/apachekafka-original.svg`,
-  Celery: "https://cdn.simpleicons.org/celery/37814A",
-  PyTorch: `${deviconBase}/pytorch/pytorch-original.svg`,
-  CLIP: "https://cdn.simpleicons.org/openai/412991",
-  Qdrant: "https://cdn.simpleicons.org/qdrant/DC244C",
-  Redis: `${deviconBase}/redis/redis-original.svg`,
-  Pandas: `${deviconBase}/pandas/pandas-original.svg`,
-  "Scikit-learn": `${deviconBase}/scikitlearn/scikitlearn-original.svg`,
-  AWS: `${deviconBase}/amazonwebservices/amazonwebservices-original-wordmark.svg`,
-  Docker: `${deviconBase}/docker/docker-original.svg`,
-  Kubernetes: `${deviconBase}/kubernetes/kubernetes-original.svg`,
-  Jenkins: `${deviconBase}/jenkins/jenkins-original.svg`,
-  Linux: `${deviconBase}/linux/linux-original.svg`,
-  ECS: `${deviconBase}/amazonwebservices/amazonwebservices-original-wordmark.svg`,
-  ECR: `${deviconBase}/amazonwebservices/amazonwebservices-original-wordmark.svg`,
-  S3: `${deviconBase}/amazonwebservices/amazonwebservices-original-wordmark.svg`,
-  "Oracle Database": `${deviconBase}/oracle/oracle-original.svg`,
-  MySQL: `${deviconBase}/mysql/mysql-original.svg`,
-  MongoDB: `${deviconBase}/mongodb/mongodb-original.svg`,
-  Firebase: `${deviconBase}/firebase/firebase-original.svg`,
-};
-
-const achievements = [
-  {
-    title: "Meta × Hugging Face OpenEnv Finalist",
-    note: "National finale · selected from 31,000+ registered teams",
-    year: "2026",
-  },
-  {
-    title: "IEEE Research Publication",
-    note: "Exploring blockchain’s role in enhancing supply chains",
-    year: "2023",
-    href: "https://ieeexplore.ieee.org/document/10245587",
-  },
-  {
-    title: "LeetCode Knight",
-    note: "Rating 1866 · rank 1108 in Biweekly Contest 145",
-    year: "2024",
-    href: "https://leetcode.com/u/eLeet_chirag/",
-  },
-  {
-    title: "GATE CS Qualified",
-    note: "Rank 2816 among 75,680 candidates",
-    year: "2023",
-  },
-];
+const {
+  identity,
+  hero,
+  about,
+  sectionIntroductions,
+  experience,
+  projects,
+  skillGroups,
+  skillIcons,
+  education,
+  achievements,
+  contact,
+} = siteConfig;
 
 function Arrow() {
   return <span aria-hidden="true">↗</span>;
 }
 
-function ProjectVisual({ kind, title }: { kind: string; title: string }) {
+function ProjectVisual({ kind, title }: { kind: ProjectVisualKind; title: string }) {
   if (kind === "jira") {
     return <JiraRLPlayground />;
   }
@@ -217,9 +49,9 @@ export default function Home() {
       </a>
 
       <header className="site-header">
-        <a className="wordmark" href="#top" aria-label="Chirag Aparadh, home">
+        <a className="wordmark" href="#top" aria-label={`${identity.name}, home`}>
           <span>CA</span>
-          <strong>chirag aparadh</strong>
+          <strong>{identity.shortName}</strong>
         </a>
 
         <nav className="desktop-nav" aria-label="Main navigation">
@@ -241,27 +73,26 @@ export default function Home() {
       <main id="main">
         <section className="hero" id="top">
           <div className="hero-copy">
-            <p className="eyebrow"><span /> M.S. CS @ UMass Amherst · Class of 2028</p>
+            <p className="eyebrow"><span /> {hero.eyebrow}</p>
             <h1>
-              I build the systems
-              <span className="hero-highlight">behind the screen.</span>
+              {hero.heading}
+              <span className="hero-highlight">{hero.highlight}</span>
             </h1>
             <p className="hero-intro">
-              I’m <strong>Chirag Aparadh</strong>, a software engineer working on reliable backend,
-              distributed, and AI-powered systems, from banking platforms to multimodal search.
+              I’m <strong>{identity.name}</strong>, {hero.introduction}
             </p>
             <div className="hero-actions">
               <a className="button button--dark" href="#projects">
                 See what I build <span aria-hidden="true">↓</span>
               </a>
-              <a className="button button--paper" href="/resume.pdf" target="_blank" rel="noreferrer">
+              <a className="button button--paper" href={identity.resume} target="_blank" rel="noreferrer">
                 Read my résumé <Arrow />
               </a>
             </div>
             <div className="hero-links" aria-label="Social links">
-              <a href="https://github.com/git-chirag" target="_blank" rel="noreferrer">GitHub <Arrow /></a>
-              <a href="https://linkedin.com/in/chirag-aparadh" target="_blank" rel="noreferrer">LinkedIn <Arrow /></a>
-              <span>Mumbai, India</span>
+              <a href={identity.github} target="_blank" rel="noreferrer">GitHub <Arrow /></a>
+              <a href={identity.linkedin} target="_blank" rel="noreferrer">LinkedIn <Arrow /></a>
+              <span>{identity.location}</span>
             </div>
           </div>
 
@@ -272,19 +103,17 @@ export default function Home() {
             <div className="portrait-card">
               <PortraitSwitcher />
               <div className="portrait-caption">
-                <span>Currently</span>
-                <strong>M.S. CS @ UMass Amherst</strong>
+                <span>{hero.currentLabel}</span>
+                <strong>{hero.currentValue}</strong>
               </div>
             </div>
-            <div className="float-card float-card--users">
-              <strong>2M+</strong>
-              <span>daily users</span>
-            </div>
-            <div className="float-card float-card--uptime">
-              <span className="status-dot" />
-              <strong>99.99%</strong>
-              <span>platform uptime</span>
-            </div>
+            {hero.metrics.map((metric) => (
+              <div className={`float-card ${metric.className}`} key={metric.label}>
+                {metric.showStatusDot && <span className="status-dot" />}
+                <strong>{metric.value}</strong>
+                <span>{metric.label}</span>
+              </div>
+            ))}
             <span className="confetti confetti--one" aria-hidden="true" />
             <span className="confetti confetti--two" aria-hidden="true" />
             <span className="confetti confetti--three" aria-hidden="true" />
@@ -306,35 +135,21 @@ export default function Home() {
               <p className="section-number">01 · About</p>
               <h2>Serious systems.<br /><em>A little colour.</em></h2>
             </div>
-            <p>
-              I like the invisible parts of products: the queues, services, data flows, and
-              decisions that make an experience feel effortless. My work sits where dependable
-              engineering meets useful intelligence.
-            </p>
+            <p>{about.introduction}</p>
           </div>
 
           <div className="about-grid">
             <article className="about-card about-card--wide">
-              <span className="card-label">What I care about</span>
-              <h3>Software people can trust when the stakes are real.</h3>
-              <p>
-                At Oracle Financial Services Software, I worked on core banking services used at
-                national scale. I now explore retrieval systems, distributed workloads,
-                and how applied AI can solve concrete product problems.
-              </p>
+              <span className="card-label">{about.cardLabel}</span>
+              <h3>{about.cardTitle}</h3>
+              <p>{about.cardBody}</p>
             </article>
-            <article className="metric-card metric-card--pink">
-              <strong>150K</strong>
-              <p>daily transactions strengthened with bot-detection workflows</p>
-            </article>
-            <article className="metric-card metric-card--yellow">
-              <strong>2M+</strong>
-              <p>daily users supported by the core banking platform I help maintain</p>
-            </article>
-            <article className="metric-card metric-card--mint">
-              <strong>92%</strong>
-              <p>test accuracy achieved by the loan eligibility model I developed</p>
-            </article>
+            {about.metrics.map((metric) => (
+              <article className={`metric-card metric-card--${metric.color}`} key={metric.label}>
+                <strong>{metric.value}</strong>
+                <p>{metric.label}</p>
+              </article>
+            ))}
           </div>
         </section>
 
@@ -373,7 +188,7 @@ export default function Home() {
               <p className="section-number">03 · Selected work</p>
               <h2>Things I made<br /><em>to learn & solve.</em></h2>
             </div>
-            <p>A small selection of systems that move data, connect people, and make complicated workflows easier to use.</p>
+            <p>{sectionIntroductions.projects}</p>
           </div>
 
           <div className="project-grid">
@@ -408,7 +223,7 @@ export default function Home() {
               <p className="section-number">04 · Toolbox</p>
               <h2>Tools I reach for<br /><em>and why.</em></h2>
             </div>
-            <p>I choose technology for the problem in front of me. These are the tools I’ve used to ship, investigate, and iterate.</p>
+            <p>{sectionIntroductions.toolbox}</p>
           </div>
 
           <div className="skill-groups">
@@ -445,28 +260,19 @@ export default function Home() {
 
           <div className="proof-layout">
             <div className="education-stack">
-              <article className="education-card education-card--umass">
-                <span className="education-year">2026 to 2028</span>
-                <div className="education-mark education-mark--umass">
-                  <img src="/umass-logo.png" alt="University of Massachusetts Amherst logo" />
-                </div>
-                <div>
-                  <p>University of Massachusetts Amherst</p>
-                  <h3>M.S. in Computer Science</h3>
-                  <span>Currently attending · Class of 2028</span>
-                </div>
-              </article>
-              <article className="education-card education-card--rait">
-                <span className="education-year">2019 to 2023</span>
-                <div className="education-mark education-mark--rait">
-                  <img src="/rait-logo.png" alt="D. Y. Patil University logo" />
-                </div>
-                <div>
-                  <p>Ramrao Adik Institute of Technology</p>
-                  <h3>B.Tech in Computer Science & Engineering</h3>
-                  <span>CGPA 9.51 / 10 · GATE qualified</span>
-                </div>
-              </article>
+              {education.map((item) => (
+                <article className={`education-card education-card--${item.key}`} key={item.school}>
+                  <span className="education-year">{item.years}</span>
+                  <div className={`education-mark education-mark--${item.key}`}>
+                    <img src={item.logo} alt={item.logoAlt} />
+                  </div>
+                  <div>
+                    <p>{item.school}</p>
+                    <h3>{item.degree}</h3>
+                    <span>{item.note}</span>
+                  </div>
+                </article>
+              ))}
             </div>
 
             <div className="achievement-list">
@@ -500,12 +306,9 @@ export default function Home() {
           <div className="contact-copy">
             <p className="section-number">06 · Let’s talk</p>
             <h2>Have a hard problem<br />with <em>real-world impact?</em></h2>
-            <p className="contact-intro">
-              I’m looking for Summer 2027 software engineering internships across backend systems,
-              cloud infrastructure, distributed systems, and applied AI.
-            </p>
-            <a className="contact-link" href="https://linkedin.com/in/chirag-aparadh" target="_blank" rel="noreferrer">
-              Or connect on LinkedIn <Arrow />
+            <p className="contact-intro">{contact.introduction}</p>
+            <a className="contact-link" href={identity.linkedin} target="_blank" rel="noreferrer">
+              {contact.linkLabel} <Arrow />
             </a>
           </div>
           <ContactForm />
@@ -513,8 +316,8 @@ export default function Home() {
       </main>
 
       <footer>
-        <a className="wordmark" href="#top"><span>CA</span><strong>chirag aparadh</strong></a>
-        <p>Backend engineer. Systems thinker. Curious human.</p>
+        <a className="wordmark" href="#top"><span>CA</span><strong>{identity.shortName}</strong></a>
+        <p>{identity.footerLine}</p>
         <a href="#top">Back to top ↑</a>
       </footer>
     </>

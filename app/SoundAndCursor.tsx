@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { featureEnabled } from "./siteConfig";
 
 type SafariAudioWindow = Window & typeof globalThis & {
   webkitAudioContext?: typeof AudioContext;
@@ -63,6 +64,11 @@ const sectionGuides: Record<(typeof guideOrder)[number], Guide> = {
 };
 
 export function SoundAndCursor() {
+  const birdEnabled = featureEnabled("bird");
+  const pianoEnabled = featureEnabled("piano");
+  const clickSoundsEnabled = featureEnabled("clickSounds");
+  const customCursorEnabled = featureEnabled("customCursor");
+  const scrollIndicatorEnabled = featureEnabled("scrollIndicator");
   const audioContextRef = useRef<AudioContext | null>(null);
   const cursorRef = useRef<HTMLDivElement | null>(null);
   const cursorTipRef = useRef<HTMLDivElement | null>(null);
@@ -164,6 +170,8 @@ export function SoundAndCursor() {
   }, [speak]);
 
   useEffect(() => {
+    if (!clickSoundsEnabled) return;
+
     const handleInteractiveClick = (event: PointerEvent) => {
       if (event.button !== 0) return;
       const target = event.target;
@@ -178,9 +186,11 @@ export function SoundAndCursor() {
 
     window.addEventListener("pointerdown", handleInteractiveClick);
     return () => window.removeEventListener("pointerdown", handleInteractiveClick);
-  }, [playTone]);
+  }, [clickSoundsEnabled, playTone]);
 
   useEffect(() => {
+    if (!birdEnabled) return;
+
     const handleReward = (event: Event) => {
       const message = (event as CustomEvent<{ message?: string }>).detail?.message ?? "Nice move!";
       speak(message, 2200, true);
@@ -197,12 +207,44 @@ export function SoundAndCursor() {
       window.removeEventListener("portfolio:reward", handleReward);
       window.removeEventListener("contact:sent", handleContactSent);
     };
-  }, [speak]);
+  }, [birdEnabled, speak]);
 
   useEffect(() => {
+    if (!scrollIndicatorEnabled) return;
+
     const progress = progressRef.current;
+    if (!progress) return;
+
+    let frame = 0;
+
+    const updateProgress = () => {
+      const maximum = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+      const value = Math.min(Math.max(window.scrollY / maximum, 0), 1);
+      progress.style.setProperty("--scroll-progress", String(value));
+      progress.style.setProperty("--scroll-position", `${value * 100}%`);
+      frame = 0;
+    };
+
+    const requestUpdate = () => {
+      if (!frame) frame = window.requestAnimationFrame(updateProgress);
+    };
+
+    updateProgress();
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+
+    return () => {
+      window.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, [scrollIndicatorEnabled]);
+
+  useEffect(() => {
+    if (!birdEnabled) return;
+
     const bird = birdRef.current;
-    if (!progress || !bird) return;
+    if (!bird) return;
 
     const sections = guideOrder
       .map((id) => document.getElementById(id))
@@ -218,11 +260,6 @@ export function SoundAndCursor() {
       const elapsed = Math.max(now - lastTime, 16);
       const distance = Math.abs(currentY - lastY);
       const speed = distance / elapsed;
-
-      const maximum = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
-      const value = Math.min(Math.max(currentY / maximum, 0), 1);
-      progress.style.setProperty("--scroll-progress", String(value));
-      progress.style.setProperty("--scroll-position", `${value * 100}%`);
 
       if (distance > 80 && speed > 1.35) {
         if (!hurryingRef.current) speak("Wait for me!", 1000);
@@ -296,9 +333,11 @@ export function SoundAndCursor() {
       window.removeEventListener("resize", requestUpdate);
       if (frame) window.cancelAnimationFrame(frame);
     };
-  }, [speak]);
+  }, [birdEnabled, speak]);
 
   useEffect(() => {
+    if (!customCursorEnabled) return;
+
     const finePointer = window.matchMedia("(pointer: fine)");
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (!finePointer.matches || reducedMotion.matches) return;
@@ -370,7 +409,7 @@ export function SoundAndCursor() {
       window.cancelAnimationFrame(frame);
       window.clearTimeout(clickTimer);
     };
-  }, []);
+  }, [customCursorEnabled]);
 
   useEffect(() => () => {
     const context = audioContextRef.current;
@@ -382,73 +421,83 @@ export function SoundAndCursor() {
 
   return (
     <>
-      <div className="crayon-progress" ref={progressRef} aria-hidden="true">
-        <span /><i />
-      </div>
-
-      <button
-        className={`site-bird${birdFacingLeft ? " is-facing-left" : ""}${birdSpeaking ? " is-speaking" : ""}${birdExcited ? " is-excited" : ""}${birdHurrying ? " is-hurrying" : ""}${birdPetted ? " is-petted" : ""}`}
-        type="button"
-        ref={birdRef}
-        aria-label="Pet Pip, the portfolio bird and tour guide"
-        onPointerEnter={() => {
-          if (window.matchMedia("(hover: hover)").matches) petBird();
-        }}
-        onClick={petBird}
-      >
-        <span className="bird-speech" role="status">{birdMessage}</span>
-        <span className="bird-speed-lines" aria-hidden="true"><i /><i /><i /></span>
-        <span className="bird-hearts" aria-hidden="true"><i>♥</i><i>♥</i><i>♥</i></span>
-        <span className="bird-body" aria-hidden="true">
-          <i className="bird-eye" />
-          <i className="bird-beak" />
-          <span className="bird-wing bird-wing--front" />
-          <span className="bird-wing bird-wing--back" />
-          <span className="bird-tail" />
-        </span>
-      </button>
-
-      <aside className={`pocket-piano${pianoOpen ? " is-open" : ""}`} aria-label="Pocket piano">
-        <button
-          className="pocket-piano__tab"
-          type="button"
-          aria-expanded={pianoOpen}
-          aria-controls="pocket-piano-keys"
-          onClick={() => setPianoOpen((current) => !current)}
-        >
-          <span aria-hidden="true">♫</span>
-          Piano
-        </button>
-        <div className="pocket-piano__body" id="pocket-piano-keys">
-          <p>Hover or tap a key</p>
-          <div className="pocket-piano__keys">
-            {pianoNotes.map((note, index) => (
-              <button
-                className={`piano-key piano-key--${index + 1}`}
-                type="button"
-                key={note.label}
-                data-piano-key="true"
-                aria-label={`Play ${note.label} note`}
-                onPointerEnter={() => {
-                  if (audioContextRef.current?.state === "running") playPianoNote(note.frequency);
-                }}
-                onPointerDown={() => playPianoNote(note.frequency)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    playPianoNote(note.frequency);
-                  }
-                }}
-              >
-                <span>{note.label}</span>
-              </button>
-            ))}
-          </div>
+      {scrollIndicatorEnabled && (
+        <div className="crayon-progress" ref={progressRef} aria-hidden="true">
+          <span /><i />
         </div>
-      </aside>
+      )}
 
-      <div className="fun-cursor" ref={cursorRef} aria-hidden="true"><span /></div>
-      <div className="fun-cursor-tip" ref={cursorTipRef} aria-hidden="true" />
+      {birdEnabled && (
+        <button
+          className={`site-bird${birdFacingLeft ? " is-facing-left" : ""}${birdSpeaking ? " is-speaking" : ""}${birdExcited ? " is-excited" : ""}${birdHurrying ? " is-hurrying" : ""}${birdPetted ? " is-petted" : ""}`}
+          type="button"
+          ref={birdRef}
+          aria-label="Pet Pip, the portfolio bird and tour guide"
+          onPointerEnter={() => {
+            if (window.matchMedia("(hover: hover)").matches) petBird();
+          }}
+          onClick={petBird}
+        >
+          <span className="bird-speech" role="status">{birdMessage}</span>
+          <span className="bird-speed-lines" aria-hidden="true"><i /><i /><i /></span>
+          <span className="bird-hearts" aria-hidden="true"><i>♥</i><i>♥</i><i>♥</i></span>
+          <span className="bird-body" aria-hidden="true">
+            <i className="bird-eye" />
+            <i className="bird-beak" />
+            <span className="bird-wing bird-wing--front" />
+            <span className="bird-wing bird-wing--back" />
+            <span className="bird-tail" />
+          </span>
+        </button>
+      )}
+
+      {pianoEnabled && (
+        <aside className={`pocket-piano${pianoOpen ? " is-open" : ""}`} aria-label="Pocket piano">
+          <button
+            className="pocket-piano__tab"
+            type="button"
+            aria-expanded={pianoOpen}
+            aria-controls="pocket-piano-keys"
+            onClick={() => setPianoOpen((current) => !current)}
+          >
+            <span aria-hidden="true">♫</span>
+            Piano
+          </button>
+          <div className="pocket-piano__body" id="pocket-piano-keys">
+            <p>Hover or tap a key</p>
+            <div className="pocket-piano__keys">
+              {pianoNotes.map((note, index) => (
+                <button
+                  className={`piano-key piano-key--${index + 1}`}
+                  type="button"
+                  key={note.label}
+                  data-piano-key="true"
+                  aria-label={`Play ${note.label} note`}
+                  onPointerEnter={() => {
+                    if (audioContextRef.current?.state === "running") playPianoNote(note.frequency);
+                  }}
+                  onPointerDown={() => playPianoNote(note.frequency)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      playPianoNote(note.frequency);
+                    }
+                  }}
+                >
+                  <span>{note.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </aside>
+      )}
+
+      {customCursorEnabled && (
+        <>
+          <div className="fun-cursor" ref={cursorRef} aria-hidden="true"><span /></div>
+          <div className="fun-cursor-tip" ref={cursorTipRef} aria-hidden="true" />
+        </>
+      )}
     </>
   );
 }

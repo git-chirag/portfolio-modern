@@ -3,6 +3,9 @@
 A responsive personal portfolio focused on backend engineering, distributed
 systems, cloud infrastructure, and applied AI.
 
+For the content map, feature flags, and safe update instructions, see
+[`WEBSITE_STRUCTURE.md`](./WEBSITE_STRUCTURE.md).
+
 ## Local development
 
 ```bash
