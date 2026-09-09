@@ -238,9 +238,9 @@ export const siteConfig: {
       description:
         "An OpenEnv-compatible Jira simulation for training and evaluating LLM agents across ticket triage, assignment, prioritization, dependencies, SLA compliance, and resolution workflows.",
       highlights: [
-        "Built a stateful, OpenEnv-compatible Jira workflow simulator with structured agent actions, isolated episodes, dependency constraints, deterministic task generation, and executable reward functions.",
-        "Generated and validated 3,500 hint-free procedural training decisions with disjoint train, validation, and test seeds, publishing reproducible datasets and model adapters to Hugging Face.",
-        "Fine-tuned Qwen3-0.6B using 4-bit QLoRA, completing 60/60 held-out in-distribution workflow episodes, with 500/500 productive transitions and zero invalid actions.",
+        "Created a stateful, OpenEnv-compatible Jira simulator for training LLM agents, with structured actions, isolated episodes, dependency constraints, and executable reward functions.",
+        "Generated and validated 3,500 hint-free procedural decisions across disjoint train/val/test seeds, publishing reproducible datasets and adapters to Hugging Face.",
+        "Fine-tuned Qwen3-0.6B with 4-bit QLoRA, completing 60/60 held-out in-distribution episodes with 500/500 productive transitions and zero invalid actions.",
         "Built environment-backed GRPO with checkpoint recovery and promotion gates; diagnosed v1 action collapse and v2 zero-gradient saturation, blocking an unjustified long run.",
         "Diagnosed action collapse and zero-gradient RL optimization using raw trajectories, candidate reward variance, entropy, and gradient statistics; currently extending evaluation to out-of-distribution workflows and recovery states.",
       ],

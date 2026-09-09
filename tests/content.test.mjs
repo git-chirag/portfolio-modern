@@ -38,7 +38,7 @@ test("portfolio exposes working contact and resume destinations", () => {
 test("portfolio includes the JiraRL agent environment project", () => {
   assert.match(config, /title: "JiraRL"/);
   assert.match(config, /OpenEnv-compatible Jira simulation/);
-  assert.match(config, /3,500 hint-free procedural training decisions/);
+  assert.match(config, /3,500 hint-free procedural decisions/);
   assert.match(config, /60\/60 held-out in-distribution/);
   assert.match(config, /environment-backed GRPO/);
   assert.match(page, /<JiraRLPlayground \/>/);
