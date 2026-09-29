@@ -9,7 +9,7 @@ export type FeatureFlagName =
 
 // Change a value from "y" to "n" to disable that feature everywhere.
 export const featureFlags: Record<FeatureFlagName, FeatureFlagValue> = {
-  bird: "y",
+  bird: "n",
   piano: "y",
   clickSounds: "y",
   customCursor: "y",

@@ -64,7 +64,7 @@ test("site content and maintenance instructions are centralized", () => {
 });
 
 test("portfolio includes the playful interactive companions", () => {
-  assert.match(config, /bird: "y"/);
+  assert.match(config, /bird: "n"/);
   assert.match(config, /piano: "y"/);
   assert.match(config, /clickSounds: "y"/);
   assert.match(config, /customCursor: "y"/);
