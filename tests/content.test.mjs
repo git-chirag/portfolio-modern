@@ -24,7 +24,7 @@ test("portfolio contains the primary content sections", () => {
 
 test("portfolio exposes working contact and resume destinations", () => {
   assert.match(page, /href="#contact"/);
-  assert.match(config, /email: "chiragaparadh@gmail\.com"/);
+  assert.match(config, /email: "chiragaparadh767@gmail\.com"/);
   assert.match(contactForm, /formsubmit\.co\/ajax\/\$\{siteConfig\.identity\.email\}/);
   assert.match(contactForm, /name="name"/);
   assert.match(contactForm, /name="email"/);

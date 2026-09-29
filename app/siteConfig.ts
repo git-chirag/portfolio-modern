@@ -128,7 +128,7 @@ export const siteConfig: {
   identity: {
     name: "Chirag Aparadh",
     shortName: "chirag aparadh",
-    email: "chiragaparadh@gmail.com",
+    email: "chiragaparadh767@gmail.com",
     location: "Amherst, MA",
     github: "https://github.com/git-chirag",
     linkedin: "https://linkedin.com/in/chirag-aparadh",
