@@ -85,6 +85,7 @@ test("portfolio includes the playful interactive companions", () => {
   assert.match(styles, /@keyframes bird-hurry/);
   assert.match(styles, /@keyframes heart-float/);
   assert.match(styles, /@keyframes paper-plane-flight/);
+  assert.match(styles, /@media \(pointer: coarse\)[\s\S]*?\.pocket-piano\s*\{\s*display:\s*none/);
 });
 
 test("every project visual offers an interaction", () => {

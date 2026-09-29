@@ -2682,6 +2682,10 @@ footer > a:last-child {
   transform: translateY(3px);
 }
 
+@media (pointer: coarse) {
+  .pocket-piano { display: none; }
+}
+
 .fun-cursor,
 .fun-cursor-tip {
   position: fixed;
